@@ -12,7 +12,6 @@
 - [Widget and Menu Construction](#widget-and-menu-construction)
 - [Event Handling and Rendering](#event-handling-and-rendering)
 - [Advanced Usage](#advanced-usage)
-- [License](#license)
 - [Troubleshooting and Tips](#troubleshooting-and-tips)
 
 ---
@@ -252,5 +251,3 @@ checkbox->LinkTo(child->AddChildWindow("ChildWindow"));
 
 - **Input Handling:**  
   If you encounter issues with input, double-check your message loop and ensure that only the appropriate messages are forwarded to Vane.
-
----

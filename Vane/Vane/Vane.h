@@ -30,32 +30,31 @@ public:
 	class Style {
 	public:
 		// Sizes						     
-		inline static float TextSize = 18.f;
-		inline static float TextSizeSmall = 13.f;
-		inline static float Rounding = 8.f;
-		inline static float BorderSize = 1.f;
+		inline static const float TextSize   = 18.f;
+		inline static float Rounding         = 8.f;
+		inline static float BorderSize       = 1.f;
 
-		inline static float TabHeight = 28.f;
-		inline static float Spacing = 8.f;
+		inline static float TabHeight        = 28.f;
+		inline static float Spacing          = 8.f;
 
-		inline static float TopBarHeight = 48.f;
-		inline static float ChildTabWidth = 100.f;
+		inline static float TopBarHeight     = 48.f;
+		inline static float ChildTabWidth    = 100.f;
 
-		inline static float SideBarColl = 68.f;
-		inline static float SideBarWidth = 140.f;
+		inline static float SideBarColl      = 68.f;
+		inline static float SideBarWidth     = 140.f;
 
 		inline static float ChildWindowWidth = 220.f;
 
-		inline static float AnimationSpeed = 8.f;
+		inline static float AnimationSpeed   = 8.f;
 
 		// Colors						     
-		inline static XyColor Background = XyColor(0.1f, 0.1f, 0.1f, 0.65f);
-		inline static XyColor Text = XyColor(0xE0, 0xE8, 0xFF);
-		inline static XyColor Icon = XyColor(0xE0, 0xE8, 0xFF);
-		inline static XyColor Accent = XyColor(0xB2, 0xC6, 0xFF);
-		inline static XyColor Accent2 = XyColor(0xA5, 0xA0, 0xBC, 0x75);
-		inline static XyColor Highlight = XyColor(1.f, 1.f, 1.f);
-		inline static XyColor Disabled = XyColor(0.5f, 0.5f, 0.5f);
+		inline static XyColor Background     = XyColor(0.1f, 0.1f, 0.1f, 0.65f);
+		inline static XyColor Text           = XyColor(0xE0, 0xE8, 0xFF);
+		inline static XyColor Icon           = XyColor(0xE0, 0xE8, 0xFF);
+		inline static XyColor Accent         = XyColor(0xB2, 0xC6, 0xFF);
+		inline static XyColor Accent2        = XyColor(0xA5, 0xA0, 0xBC, 0x75);
+		inline static XyColor Highlight      = XyColor(1.f, 1.f, 1.f);
+		inline static XyColor Disabled       = XyColor(0.5f, 0.5f, 0.5f);
 	};
 
 	class Data {
@@ -88,57 +87,57 @@ public:
 		{
 			XyVec2 iResolution;
 			float Animation;
-			float iTime = 0.f;
+			float iTime       = 0.f;
 
-			float NoiseScale = 0.35f;
-			int BlurEnabled = true;
-			int BlurMenuOnly = true;
+			float NoiseScale  = 0.35f;
+			int BlurEnabled   = true;
+			int BlurMenuOnly  = true;
 			float Rounding;
 
-			float ShadowSize = 20.f;
+			float ShadowSize  = 20.f;
 			float ShadowAlpha = 0.6f;
 
-			float TURB_AMP = 1.35f;
-			float TURB_NUM = 8.0;
+			float TURB_AMP    = 1.35f;
+			float TURB_NUM    = 8.0;
 
-			float TURB_SPEED = 1.2;
-			float TURB_FREQ = 5.2;
-			float TURB_EXP = 1.25;
+			float TURB_SPEED  = 1.2;
+			float TURB_FREQ   = 5.2;
+			float TURB_EXP    = 1.25;
 			float pad;
 
 			XyVec4 MenuPos;
 
 			XyColor BackgroundColor = XyColor(0.f, 0.f, 0.f, 0.3f);
 			XyColor MenuBackgroundColor;
-			XyColor AnimationColor = XyColor(1.f, 1.f, 1.f, 0.3f);
+			XyColor AnimationColor  = XyColor(1.f, 1.f, 1.f, 0.3f);
 		};
 
 		inline static ConstantBuffer<ShaderConstants> ConstantBuffer;
 
 	private:
-		inline static ID3D11Texture2D* m_pOffscreenTexture = nullptr;
+		inline static ID3D11Texture2D* m_pOffscreenTexture      = nullptr;
 		inline static ID3D11ShaderResourceView* m_pOffscreenSRV = nullptr;
-		inline static ID3D11Texture2D* m_pBackBuffer = nullptr;
-		inline static ID3D11VertexShader* m_pQuadVS = nullptr;
-		inline static ID3D11PixelShader* m_pBlurPS = nullptr;
-		inline static ID3D11InputLayout* m_pInputLayout = nullptr;
-		inline static ID3D11Buffer* m_pQuadVB = nullptr;
-		inline static ID3D11Buffer* m_pQuadIB = nullptr;
-		inline static ID3D11SamplerState* m_pSamplerState = nullptr;
-		inline static ID3D11BlendState* m_pBlendState = nullptr;
+		inline static ID3D11Texture2D* m_pBackBuffer            = nullptr;
+		inline static ID3D11VertexShader* m_pQuadVS				= nullptr;
+		inline static ID3D11PixelShader* m_pBlurPS				= nullptr;
+		inline static ID3D11InputLayout* m_pInputLayout			= nullptr;
+		inline static ID3D11Buffer* m_pQuadVB					= nullptr;
+		inline static ID3D11Buffer* m_pQuadIB					= nullptr;
+		inline static ID3D11SamplerState* m_pSamplerState		= nullptr;
+		inline static ID3D11BlendState* m_pBlendState			= nullptr;
 	};
 
 	class Cursor {
 	public:
 		inline static std::atomic<HCURSOR> actual = NULL;
-		inline static HCURSOR current = NULL;
+		inline static HCURSOR current			  = NULL;
 
-		inline static HCURSOR arrow = NULL;
-		inline static HCURSOR hand = NULL;
-		inline static HCURSOR text = NULL;
-		inline static HCURSOR size = NULL;
-		inline static HCURSOR sizev = NULL;
-		inline static HCURSOR sizeall = NULL;
+		inline static HCURSOR arrow				  = NULL;
+		inline static HCURSOR hand				  = NULL;
+		inline static HCURSOR text				  = NULL;
+		inline static HCURSOR size				  = NULL;
+		inline static HCURSOR sizev				  = NULL;
+		inline static HCURSOR sizeall			  = NULL;
 
 		static bool Init();
 		static void Set();

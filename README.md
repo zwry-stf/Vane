@@ -70,6 +70,9 @@ Vane::AddConfigTab("Config");
 Vane::Config::AddModule<bool>(&value, "value");
 ```
 
+**Important**:
+Add Widgets and Config Modules before calling Vane::Init()
+
 ## Images
 
 Visual examples can help users understand the capabilities of Vane. Add screenshots of your framework in action to an `images` folder in your repository, and reference them here. For example:

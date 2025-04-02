@@ -20,7 +20,7 @@ Vane is a modern C++17 (and higher) framework for creating dynamic, interactive 
 
 1. **Clone the Repository:**
    ```bash
-   git clone https://github.com/yourusername/vane-menu-framework.git
+   git clone https://github.com/zwry-stf/Vane.git
    ```
 2. **Open in Visual Studio 2022:**
    Open the solution file and ensure your project settings are configured for C++17 (or higher).

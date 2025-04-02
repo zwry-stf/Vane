@@ -64,7 +64,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, uint32_t msg, uint64_t wParam, int64_t lPara
     }
     else if (msg == WM_SETCURSOR)
     {
-        if (Vane::open && isInRect(Vane::Data::LastCursorPos.x, Vane::Data::LastCursorPos.y, Vane::x, Vane::y, Vane::w, Vane::h))
+        if (Vane::open && Vane::Cursor::actual.load() != Vane::Cursor::arrow)
         {
             Vane::Cursor::Set();
             return S_OK;

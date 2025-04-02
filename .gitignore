@@ -16,6 +16,10 @@
 # Mono auto generated files
 mono_crash.*
 
+# Resources
+Vane/Vane/Res/png/*.png
+Vane/Vane/Res/font/*.ttf
+
 # Build results
 [Dd]ebug/
 [Dd]ebugPublic/

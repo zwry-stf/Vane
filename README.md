@@ -72,7 +72,7 @@ Vane::Config::AddModule<bool>(&value, "value");
 
 **Important**:
 Add Widgets and Config Modules before calling Vane::Init(). 
-A more detailed Documentation can be found here [Documentation](Documentation)
+A more detailed Documentation can be found [here](Documentation.md)
 
 ## Images
 

@@ -74,23 +74,9 @@ Vane::Config::AddModule<bool>(&value, "value");
 
 Visual examples can help users understand the capabilities of Vane. Add screenshots of your framework in action to an `images` folder in your repository, and reference them here. For example:
 
-```markdown
-![Main Menu Screenshot](images/screenshot1.png)
-![Widget Demo](images/screenshot2.png)
-```
-
-## Contributing
-
-Contributions are welcome! If you have ideas or improvements, please fork the repository and submit a pull request. For major changes, consider opening an issue first to discuss your ideas.
+![image](https://github.com/user-attachments/assets/ffbf5845-e0c3-43db-8686-b3f9c0c5f85f)
+![image](https://github.com/user-attachments/assets/1ed38b91-e47f-438d-a3a7-070ba8cb5982)
 
 ## License
 
-This project is licensed under the MIT License – see the [LICENSE](LICENSE) file for details.
-
-## Contact
-
-For any questions or support, please open an issue on the repository or contact the maintainer at [your.email@example.com](mailto:your.email@example.com).
-
----
-
-Feel free to ask if you need any additional sections or modifications!
+This project is licensed under a custom license. See the [LICENSE](LICENSE) file for full terms and conditions.

@@ -72,7 +72,7 @@ std::optional<long>  Slider::WndProc(const uint32_t msg, const uint64_t wParam, 
 		if (isInRect(mouseX, mouseY, lastX, lastY + Vane::Style::TextSize, lastW, lastH - Vane::Style::TextSize))
 		{
 			*selected = id;
-			return 0;
+			return S_OK;
 		}
 	}
 
@@ -81,7 +81,7 @@ std::optional<long>  Slider::WndProc(const uint32_t msg, const uint64_t wParam, 
 		if (*selected == id) 
 		{
 			*selected = -1;
-			return 0;
+			return S_OK;
 		}
 	}
 
@@ -97,13 +97,13 @@ std::optional<long>  Slider::WndProc(const uint32_t msg, const uint64_t wParam, 
 
 			Vane::Cursor::current = Vane::Cursor::size;
 
-			return 0;
+			return S_OK;
 		}
 		else if (isInRect(mouseX, mouseY, lastX, lastY + Vane::Style::TextSize, lastW, lastH - Vane::Style::TextSize))
 		{
 			*hovered = id;
 			Vane::Cursor::current = Vane::Cursor::size;
-			return 0;
+			return S_OK;
 		}
 		else if (*hovered == id)
 		{

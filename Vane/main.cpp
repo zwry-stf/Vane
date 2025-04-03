@@ -184,6 +184,30 @@ int WINAPI main()
         return -1;
 
     // Add Widgets
+    Vane::AddLabel("Test");
+
+    Vane::AddTab("Tab 1");
+    {
+        auto child = Vane::LastTab()->AddChildTab("Child 1", 2);
+
+        child->AddGroupTitle("Group 1", 0);
+
+        // Child Window
+        auto child_window = child->AddChildWindow("Child Window");
+
+        static bool value2 = false;
+        child_window->AddCheckbox("Value", &value2);
+
+        static float value3 = 1.f;
+        child_window->AddSlider("Slider", &value3, 0.f, 3.f, "%.2f");
+
+        static int key = VK_LEFT;
+        child_window->AddHotkey("Hotkey", &key);
+
+        static bool value = false;
+        child->AddCheckbox("Checkbox", &value, 0)->LinkTo(child_window);
+    }
+
     Vane::AddLabel("Other");
 
     Vane::AddDefaultThemeTab();

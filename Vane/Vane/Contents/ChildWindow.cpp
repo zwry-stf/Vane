@@ -76,8 +76,7 @@ void ChildWindow::Draw(const int id, int* opened)
 	{
 		Widgets[i]->Draw(
 			lastX + 10.f, WidgetPos, lastW - 20.f, animation,
-			i, &this->Selected, &this->Hovered, &this->Opened
-		);
+			i, &this->Hovered, &this->Selected, &this->Opened);
 
 		WidgetPos += Widgets[i]->default_height + Vane::Style::Spacing;
 	}
@@ -113,7 +112,7 @@ std::optional<long> ChildWindow::WndProc(const uint32_t msg, const uint64_t wPar
 
 	for (int i = 0; i < Widgets.size(); i++)
 	{
-		if (Widgets[i]->WndProc(msg, wParam, lParam, i, &this->Selected, &this->Hovered, &this->Opened))
+		if (Widgets[i]->WndProc(msg, wParam, lParam, i, &this->Hovered, &this->Selected, &this->Opened))
 			return S_OK;
 	}
 

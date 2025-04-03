@@ -109,7 +109,7 @@ public:
 
 			XyColor BackgroundColor = XyColor(0.f, 0.f, 0.f, 0.3f);
 			XyColor MenuBackgroundColor;
-			XyColor AnimationColor  = XyColor(1.f, 1.f, 1.f, 0.3f);
+			XyColor AnimationColor  = XyColor(1.f, 1.f, 1.f, 0.2f);
 		};
 
 		inline static ConstantBuffer<ShaderConstants> ConstantBuffer;
@@ -273,7 +273,7 @@ public:
 	};
 
 public:
-	static bool Init(IDXGISwapChain* swapchain, const XyVec2 menuSize = XyVec2(800.f, 500.f));
+	static bool Init(IDXGISwapChain* swapchain, const XyVec2 menuSize = XyVec2(800.f, 550.f));
 	static void Destroy();
 
 	static bool Render();

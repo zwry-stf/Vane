@@ -138,7 +138,7 @@ void Render()
         if (!Vane::Render())
             break;
 
-        g_pSwapChain->Present(1, 0);
+        g_pSwapChain->Present(0, 0);
     }
 
     should_exit = true;

@@ -24,10 +24,112 @@ VSOutput main(VSInput input)
 }
 )";
 
+// Just Vertical Blur
+inline static const char* blurPSCode2 = R"(
+static const int samples = 40;
+static const int LOD = 1;
+static const int sLOD = (1 << LOD);
+static const float sigma = samples * 0.25;
+static const float gaussianNormalization = 1.0 / (6.28318530718 * sigma * sigma);
+
+// Gaussian function
+float gaussian(float2 i)
+{
+    float2 d = i / sigma;
+    return exp(-0.5 * dot(d, d)) * gaussianNormalization;
+}
+
+// Texture and sampler declarations
+Texture2D inputTexture : register(t0);
+SamplerState inputSampler : register(s0);
+
+// Constant buffer for shader parameters
+cbuffer BlurConstants : register(b0)
+{
+    float2 iResolution;
+    float Animation;
+    float iTime;
+
+    float NoiseScale;
+    int BlurEnabled;
+    int BlurMenuOnly;
+    float Rounding;
+
+    float ShadowSize;
+    float ShadowAlpha;
+
+    // Background Animation
+    float TURB_AMP;
+    float TURB_NUM;
+
+    float TURB_SPEED;
+    float TURB_FREQ;
+    float TURB_EXP;
+
+    float pad;
+
+    float4 MenuPos;
+
+    float4 BackgroundColor;
+    float4 MenuBackgroundColor;
+    float4 AnimationColor;
+};
+
+// Structure for pixel shader input
+struct PSInput {
+    float4 pos : SV_POSITION;
+    float2 uv  : TEXCOORD0;
+};
+
+
+// Custom smoothstep function
+float smoothstep(float edge0, float edge1, float x)
+{
+    float t = saturate((x - edge0) / (edge1 - edge0));
+    return t * t * (3.0 - 2.0 * t);
+}
+
+// Main pixel shader function
+float4 main(PSInput input) : SV_TARGET
+{
+    float2 uv = input.uv;
+    float2 fragCoord = uv * iResolution;
+
+    int s = samples / sLOD;
+
+    // Determine if the fragment is within the menu region
+    bool posInMenu = fragCoord.x >= MenuPos.x - (float)s && fragCoord.x <= (MenuPos.x + MenuPos.z + (float)s) &&
+                   fragCoord.y >= MenuPos.y - (float)s && fragCoord.y <= (MenuPos.y + MenuPos.w + (float)s);
+    bool inMenu = BlurMenuOnly == 0 || posInMenu;
+
+    float3 blurredColor = float3(0.0, 0.0, 0.0);
+
+    // Compute blurred color if blur is enabled and fragment is in the menu area
+    float mask = 0.f;
+    if (BlurEnabled != 0 && inMenu)
+    {
+        float totalWeight = 0.0;
+        float halfSamples = samples * 0.5;
+        for (int yi = 0; yi < s; yi++)
+        {
+            float2 d = float2(0.0, yi) * sLOD - halfSamples;
+            float weight = gaussian(d);
+            float2 offset = d * (1.0 / iResolution);
+            blurredColor += weight * inputTexture.SampleLevel(inputSampler, uv + offset, LOD).xyz;
+            totalWeight += weight;
+        }
+        blurredColor /= totalWeight;
+        mask = 1.f;
+    }
+
+    return float4(blurredColor, mask);
+}
+)";
+
 inline static const char* blurPSCode = R"(
 // Shader constants
 static const int samples = 40;
-static const int LOD = 2;
+static const int LOD = 1;
 static const int sLOD = (1 << LOD);
 static const float sigma = samples * 0.25;
 static const float gaussianNormalization = 1.0 / (6.28318530718 * sigma * sigma);
@@ -159,16 +261,13 @@ float4 main(PSInput input) : SV_TARGET
         float totalWeight = 0.0;
         int s = samples / sLOD;
         float halfSamples = samples * 0.5;
-        for (int yi = 0; yi < s; yi++)
+        for (int xi = 0; xi < s; xi++)
         {
-            for (int xi = 0; xi < s; xi++)
-            {
-                float2 d = float2(xi, yi) * sLOD - halfSamples;
-                float weight = gaussian(d);
-                float2 offset = d * (1.0 / iResolution);
-                blurredColor += weight * inputTexture.SampleLevel(inputSampler, uv + offset, LOD).xyz;
-                totalWeight += weight;
-            }
+            float2 d = float2(xi, 0.0) * sLOD - halfSamples;
+            float weight = gaussian(d);
+            float2 offset = d * (1.0 / iResolution);
+            blurredColor += weight * inputTexture.SampleLevel(inputSampler, uv + offset, LOD).xyz;
+            totalWeight += weight;
         }
         blurredColor /= totalWeight;
     }
@@ -330,6 +429,29 @@ bool Vane::Background::Init()
         return false;
     }
 
+    texDesc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
+    hr = renderer.g_pd3dDevice->CreateTexture2D(&texDesc, nullptr, &m_p1PassTexture);
+    if (FAILED(hr))
+    {
+        Errors::Set("Failed to create Shader Blur texture");
+        return false;
+    }
+
+    hr = renderer.g_pd3dDevice->CreateShaderResourceView(m_p1PassTexture, nullptr,
+        &m_p1PassSRV);
+    if (FAILED(hr))
+    {
+        Errors::Set("Failed to create shader resource view 2");
+        return false;
+    }
+
+    hr = renderer.g_pd3dDevice->CreateRenderTargetView(m_p1PassTexture, nullptr, &m_p1PassRTV);
+    if (FAILED(hr))
+    {
+        Errors::Set("Failed to create vertical blur RTV");
+        return false;
+    }
+
     ID3DBlob* vsBlob = 0;
     ID3DBlob* psBlob = 0;
     ID3DBlob* errorBlob = 0;
@@ -420,6 +542,34 @@ bool Vane::Background::Init()
         return false;
     }
 
+
+    // --- Pixel Shader 2 (Blur Vertical) ---
+    hr = D3DCompile(blurPSCode2, strlen(blurPSCode2), nullptr, nullptr, nullptr,
+        "main", "ps_5_0", 0, 0, &psBlob, &errorBlob);
+    if (FAILED(hr))
+    {
+        if (psBlob)
+            psBlob->Release();
+        if (errorBlob)
+            Errors::Set((char*)errorBlob->GetBufferPointer());
+        else
+            Errors::Set("Failed to compile pixel shader");
+        if (errorBlob)
+            errorBlob->Release();
+        return false;
+    }
+    if (errorBlob)
+        errorBlob->Release();
+
+    hr = renderer.g_pd3dDevice->CreatePixelShader(psBlob->GetBufferPointer(), psBlob->GetBufferSize(),
+        nullptr, &m_pBlurPSV);
+    if (psBlob) psBlob->Release();
+    if (FAILED(hr))
+    {
+        Errors::Set("Failed to create pixel shader 2.");
+        return false;
+    }
+
     // Create constant buffer for blur parameters.
     if (!ConstantBuffer.Init(renderer.g_pd3dDevice))
     {
@@ -500,21 +650,27 @@ void Vane::Background::Render()
     viewport.MaxDepth = 1.0f;
     renderer.g_pd3dDeviceContext->RSSetViewports(1, &viewport);
 
-    //renderer.g_pd3dDeviceContext->CopyResource(m_pOffscreenTexture, m_pBackBuffer); 
     if (renderer.g_backBufferDesc.SampleDesc.Count > 1)
         renderer.g_pd3dDeviceContext->ResolveSubresource(m_pOffscreenTexture, 0, m_pBackBuffer, 0, renderer.g_backBufferDesc.Format);
     else
         renderer.g_pd3dDeviceContext->CopyResource(m_pOffscreenTexture, m_pBackBuffer);
 
+    // --- First Pass: Vertical Blur ---
+    renderer.g_pd3dDeviceContext->OMSetRenderTargets(1, &m_p1PassRTV, nullptr);
+    renderer.g_pd3dDeviceContext->RSSetViewports(1, &viewport);
+
+    float clearColor[4] = { 0, 0, 0, 0 };
+    renderer.g_pd3dDeviceContext->ClearRenderTargetView(m_p1PassRTV, clearColor);
+
     uint32_t stride = sizeof(XyVec4);
     uint32_t offset = 0;
     renderer.g_pd3dDeviceContext->IASetVertexBuffers(0, 1, &m_pQuadVB, &stride, &offset);
-    renderer.g_pd3dDeviceContext->IASetIndexBuffer(m_pQuadIB, DXGI_FORMAT_R32_UINT, 0); renderer.g_pd3dDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-
+    renderer.g_pd3dDeviceContext->IASetIndexBuffer(m_pQuadIB, DXGI_FORMAT_R32_UINT, 0);
+    renderer.g_pd3dDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
     renderer.g_pd3dDeviceContext->IASetInputLayout(m_pInputLayout);
 
     renderer.g_pd3dDeviceContext->VSSetShader(m_pQuadVS, nullptr, 0);
-    renderer.g_pd3dDeviceContext->PSSetShader(m_pBlurPS, nullptr, 0);
+    renderer.g_pd3dDeviceContext->PSSetShader(m_pBlurPSV, nullptr, 0);
 
     renderer.g_pd3dDeviceContext->PSSetShaderResources(0, 1, &m_pOffscreenSRV);
     renderer.g_pd3dDeviceContext->PSSetSamplers(0, 1, &m_pSamplerState);
@@ -525,13 +681,31 @@ void Vane::Background::Render()
     ConstantBuffer->MenuPos = XyVec4(x, y, w, h);
     ConstantBuffer->Rounding = Style::Rounding;
     ConstantBuffer->MenuBackgroundColor = Style::Background;
-
     ConstantBuffer.Update(renderer.g_pd3dDeviceContext);
-
     renderer.g_pd3dDeviceContext->PSSetConstantBuffers(0, 1, &ConstantBuffer);
 
     float blendFactor[4] = { 0, 0, 0, 0 };
     uint32_t sampleMask = 0xffffffff;
+    renderer.g_pd3dDeviceContext->OMSetBlendState(m_pBlendState, blendFactor, sampleMask);
+
+    renderer.g_pd3dDeviceContext->DrawIndexed(6, 0, 0);
+
+    // --- First Pass: Horizontal Blur and Menu Background ---
+    renderer.g_pd3dDeviceContext->OMSetRenderTargets(1, &renderer.g_pd3dRenderTargetView, nullptr);
+    renderer.g_pd3dDeviceContext->RSSetViewports(1, &viewport);
+
+    renderer.g_pd3dDeviceContext->IASetVertexBuffers(0, 1, &m_pQuadVB, &stride, &offset);
+    renderer.g_pd3dDeviceContext->IASetIndexBuffer(m_pQuadIB, DXGI_FORMAT_R32_UINT, 0);
+    renderer.g_pd3dDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+    renderer.g_pd3dDeviceContext->IASetInputLayout(m_pInputLayout);
+
+    renderer.g_pd3dDeviceContext->VSSetShader(m_pQuadVS, nullptr, 0);
+    renderer.g_pd3dDeviceContext->PSSetShader(m_pBlurPS, nullptr, 0);
+
+    renderer.g_pd3dDeviceContext->PSSetShaderResources(0, 1, &m_p1PassSRV);
+    renderer.g_pd3dDeviceContext->PSSetSamplers(0, 1, &m_pSamplerState);
+
+    renderer.g_pd3dDeviceContext->PSSetConstantBuffers(0, 1, &ConstantBuffer);
     renderer.g_pd3dDeviceContext->OMSetBlendState(m_pBlendState, blendFactor, sampleMask);
 
     renderer.g_pd3dDeviceContext->DrawIndexed(6, 0, 0);

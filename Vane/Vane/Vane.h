@@ -117,9 +117,13 @@ public:
 	private:
 		inline static ID3D11Texture2D* m_pOffscreenTexture      = nullptr;
 		inline static ID3D11ShaderResourceView* m_pOffscreenSRV = nullptr;
+		inline static ID3D11Texture2D* m_p1PassTexture          = nullptr;
+		inline static ID3D11ShaderResourceView* m_p1PassSRV     = nullptr;
+		inline static ID3D11RenderTargetView* m_p1PassRTV	    = nullptr;
 		inline static ID3D11Texture2D* m_pBackBuffer            = nullptr;
 		inline static ID3D11VertexShader* m_pQuadVS				= nullptr;
 		inline static ID3D11PixelShader* m_pBlurPS				= nullptr;
+		inline static ID3D11PixelShader* m_pBlurPSV				= nullptr;
 		inline static ID3D11InputLayout* m_pInputLayout			= nullptr;
 		inline static ID3D11Buffer* m_pQuadVB					= nullptr;
 		inline static ID3D11Buffer* m_pQuadIB					= nullptr;

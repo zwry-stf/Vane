@@ -34,6 +34,9 @@ bool Vane::Init(IDXGISwapChain* swapchain, const XyVec2 menuSize)
 		    return false;
 		}
 
+		x = (renderer.data.display_size.x - w) / 2.f;
+		y = (renderer.data.display_size.y - h) / 2.f;
+
 		return true;
 	}
 
@@ -96,6 +99,9 @@ bool Vane::Init(IDXGISwapChain* swapchain, const XyVec2 menuSize)
 		Vane::Errors::Set("Failed to load Icons");
 		return false;
 	}
+
+	x = (renderer.data.display_size.x - w) / 2.f;
+	y = (renderer.data.display_size.y - h) / 2.f;
 
 	Initialized = true;
 

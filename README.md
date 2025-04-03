@@ -77,10 +77,8 @@ A more detailed Documentation can be found [here](Documentation.md)
 
 ## Images
 
-Visual examples can help users understand the capabilities of Vane. Add screenshots of your framework in action to an `images` folder in your repository, and reference them here. For example:
-
-![image](https://github.com/user-attachments/assets/ffbf5845-e0c3-43db-8686-b3f9c0c5f85f)
-![image](https://github.com/user-attachments/assets/1ed38b91-e47f-438d-a3a7-070ba8cb5982)
+![image](https://github.com/user-attachments/assets/db23dd11-39f1-4296-9ae9-26988181f917)
+![image](https://github.com/user-attachments/assets/d7f3d86f-7232-458c-b805-8d0f1e57f0c0)
 
 ## License
 

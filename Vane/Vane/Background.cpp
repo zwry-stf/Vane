@@ -501,9 +501,10 @@ void Vane::Background::Render()
     renderer.g_pd3dDeviceContext->RSSetViewports(1, &viewport);
 
     //renderer.g_pd3dDeviceContext->CopyResource(m_pOffscreenTexture, m_pBackBuffer); 
-    if (renderer.g_backBufferDesc.SampleDesc.Count > 1) {
+    if (renderer.g_backBufferDesc.SampleDesc.Count > 1)
         renderer.g_pd3dDeviceContext->ResolveSubresource(m_pOffscreenTexture, 0, m_pBackBuffer, 0, renderer.g_backBufferDesc.Format);
-    }
+    else
+        renderer.g_pd3dDeviceContext->CopyResource(m_pOffscreenTexture, m_pBackBuffer);
 
     uint32_t stride = sizeof(XyVec4);
     uint32_t offset = 0;

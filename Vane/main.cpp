@@ -225,32 +225,32 @@ int WINAPI main()
 }
 
 #define Add Vane::Config::AddModule
+#define AddCfg(value) Vane::Config::AddModule<decltype(value)>(&value, #value)
 void AddConfig()
 {
-    /// Menu
-    Add<XyColor>(&Vane::Style::Background, "Style::Background");
-    Add<XyColor>(&Vane::Style::Text, "Style::Text");
-    Add<XyColor>(&Vane::Style::Accent, "Style::Accent");
-    Add<XyColor>(&Vane::Style::Accent2, "Style::Accent2");
-    Add<XyColor>(&Vane::Style::Icon, "Style::Icon");
-    Add<XyColor>(&Vane::Style::Highlight, "Style::Highlight");
-    Add<float>(&Vane::Style::AnimationSpeed, "Style::AnimationSpeed");
-    Add<float>(&Vane::Style::Rounding, "Style::Rounding");
-    Add<float>(&Vane::Style::ChildWindowWidth, "Style::ChildWindowWidth");
+	/// Menu
+	AddCfg(Vane::Style::Background);
+	AddCfg(Vane::Style::Text);
+	AddCfg(Vane::Style::Accent);
+	AddCfg(Vane::Style::Accent2);
+	AddCfg(Vane::Style::Icon);
+	AddCfg(Vane::Style::Highlight);
+	AddCfg(Vane::Style::AnimationSpeed);
+	AddCfg(Vane::Style::Rounding);
+	AddCfg(Vane::Style::ChildWindowWidth);
 
-    /// Background
-    Add<XyColor>(&Vane::Background::ConstantBuffer->AnimationColor, "Background::ConstantBuffer->AnimationColor");
-    Add<float>(&Vane::Background::ConstantBuffer->TURB_AMP, "Background::ConstantBuffer->TURB_AMP");
-    Add<float>(&Vane::Background::ConstantBuffer->TURB_EXP, "Background::ConstantBuffer->TURB_EXP");
-    Add<float>(&Vane::Background::ConstantBuffer->TURB_FREQ, "Background::ConstantBuffer->TURB_FREQ");
-    Add<float>(&Vane::Background::ConstantBuffer->TURB_NUM, "Background::ConstantBuffer->TURB_NUM");
-    Add<float>(&Vane::Background::ConstantBuffer->TURB_SPEED, "Background::ConstantBuffer->TURB_SPEED");
-    Add<int>(&Vane::Background::ConstantBuffer->BlurEnabled, "Background::ConstantBuffer->BlurEnabled");
-    Add<int>(&Vane::Background::ConstantBuffer->BlurMenuOnly, "Background::ConstantBuffer->BlurMenuOnly");
-    Add<float>(&Vane::Background::ConstantBuffer->NoiseScale, "Background::ConstantBuffer->NoiseScale");
-    Add<float>(&Vane::Background::ConstantBuffer->ShadowAlpha, "Background::ConstantBuffer->ShadowAlpha");
-    Add<float>(&Vane::Background::ConstantBuffer->ShadowSize, "Background::ConstantBuffer->ShadowSize");
-
+	/// Background
+	AddCfg(Vane::Background::ConstantBuffer->AnimationColor);
+	AddCfg(Vane::Background::ConstantBuffer->TURB_AMP);
+	AddCfg(Vane::Background::ConstantBuffer->TURB_EXP);
+	AddCfg(Vane::Background::ConstantBuffer->TURB_FREQ);
+	AddCfg(Vane::Background::ConstantBuffer->TURB_NUM);
+	AddCfg(Vane::Background::ConstantBuffer->TURB_SPEED);
+	AddCfg(Vane::Background::ConstantBuffer->BlurEnabled);
+	AddCfg(Vane::Background::ConstantBuffer->BlurMenuOnly);
+	AddCfg(Vane::Background::ConstantBuffer->NoiseScale);
+	AddCfg(Vane::Background::ConstantBuffer->ShadowAlpha);
+	AddCfg(Vane::Background::ConstantBuffer->ShadowSize);
 }
 
 

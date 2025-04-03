@@ -54,9 +54,10 @@ checkbox->LinkTo(
     child->AddColorpickerOverlay(&color_value, true)
 );
 // Alternatively:
-checkbox->LinkTo(
-    child->AddChildWindow("ChildWindow 1")
-);
+auto child_window = child->AddChildWindow("ChildWindow 1");
+child_window->AddCheckbox("Checkbox", &value);
+
+checkbox->LinkTo(child_window);
 
 // Additional widget options include sliders, standard color pickers, buttons, hotkeys, and dropdown lists.
 

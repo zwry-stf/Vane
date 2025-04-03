@@ -46,6 +46,8 @@ bool Vane::Config::Init(const std::string& projName)
         file.close();
     }
 
+    Load();
+
     return true;
 }
 

@@ -155,5 +155,13 @@
     <ClInclude Include="Vane\Contents\ConfigTab.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Vane\Res\shader\Shaders.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="Vane\Res\shader\BlurHorizontaletc.hlsl" />
+    <FxCompile Include="Vane\Res\shader\BlurVertical.hlsl" />
+    <FxCompile Include="Vane\Res\shader\VertexShader.hlsl" />
   </ItemGroup>
 </Project>

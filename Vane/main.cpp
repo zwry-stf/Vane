@@ -28,6 +28,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, uint32_t msg, uint64_t wParam, int64_t lPara
 {
     if (msg == WM_DESTROY)
     {
+        should_exit = true;
         PostQuitMessage(0);
         return 0;
     }
@@ -216,7 +217,10 @@ int WINAPI main()
 
     // Init Vane
     if (!Vane::Init(g_pSwapChain, XyVec2(800.f, 550.f)))
+    {
+        std::cerr << "Failed to init Vane, Error: " << Vane::Errors::Get() << std::endl;
         return -1;
+    }
 
     // Add Config Modules
     AddConfig();

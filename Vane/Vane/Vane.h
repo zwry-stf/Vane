@@ -86,12 +86,14 @@ public:
 		struct ShaderConstants
 		{
 			XyVec2 iResolution;
-			float Animation;
-			float iTime       = 0.f;
-
-			float NoiseScale  = 0.35f;
 			int BlurEnabled   = true;
 			int BlurMenuOnly  = true;
+
+			XyVec4 MenuPos;
+			
+			float iTime       = 0.f;
+			float Animation;
+			float NoiseScale  = 0.3f;
 			float Rounding;
 
 			float ShadowSize  = 20.f;
@@ -104,8 +106,6 @@ public:
 			float TURB_FREQ   = 5.2;
 			float TURB_EXP    = 1.25;
 			float pad;
-
-			XyVec4 MenuPos;
 
 			XyColor BackgroundColor = XyColor(0.f, 0.f, 0.f, 0.3f);
 			XyColor MenuBackgroundColor;
@@ -260,6 +260,8 @@ public:
 		template<typename T>
 		static void AddModule(T* data, const std::string& path)
 		{
+			XY_ASSERT(!Vane::Initialized && "Add Modules before initializing");
+
 			module_configs.push_back(new Module<T>(path, data));
 		}
 

@@ -210,11 +210,11 @@ Vane’s configuration system allows you to store and reset various settings. Re
 **Example:**
 
 ```cpp
-#define Add Vane::Config::AddModule
+#define AddCfg(value) Vane::Config::AddModule<decltype(value)>(&value, #value)
 
 void AddConfig() {
-    Add<XyColor>(&Vane::Style::Background, "Style::Background");
-    Add<float>(&Vane::Style::AnimationSpeed, "Style::AnimationSpeed");
+    AddCfg(Vane::Style::Background);
+    AddCfg(Vane::Style::AnimationSpeed);
     // Add more modules as needed...
 }
 ```
@@ -236,7 +236,9 @@ or a ChildWindow:
 
 ```cpp
 auto checkbox = child->AddCheckbox("Enable Feature", &someBoolean, area);
-checkbox->LinkTo(child->AddChildWindow("ChildWindow"));
+auto child_window = child->AddChildWindow("ChildWindow");
+child_window->AddCheckbox("Checkbox", &value);
+checkbox->LinkTo(child_window);
 ```
 
 ---

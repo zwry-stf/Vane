@@ -83,6 +83,9 @@ public:
 		static void Render();
 
 	public:
+		inline static float BlurRadius = 20.f;
+		inline static bool HighQuality = true;
+
 		struct ShaderConstants
 		{
 			XyVec2 iResolution;
@@ -105,7 +108,14 @@ public:
 			float TURB_SPEED  = 1.2;
 			float TURB_FREQ   = 5.2;
 			float TURB_EXP    = 1.25;
-			float pad;
+
+			int samples = 100;
+
+			int LOD;
+			int sLOD;
+			float sigma;
+			//static const float gaussianNormalization2D = 1.0 / (6.28318530718 * sigma * sigma);
+			float gaussianNormalization1D;
 
 			XyColor BackgroundColor = XyColor(0.f, 0.f, 0.f, 0.3f);
 			XyColor MenuBackgroundColor;

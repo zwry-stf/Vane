@@ -279,6 +279,8 @@ void AddConfig()
 	AddCfg(Vane::Background::ConstantBuffer->NoiseScale);
 	AddCfg(Vane::Background::ConstantBuffer->ShadowAlpha);
 	AddCfg(Vane::Background::ConstantBuffer->ShadowSize);
+    AddCfg(Vane::Background::BlurRadius);
+    AddCfg(Vane::Background::HighQuality);
 }
 
 

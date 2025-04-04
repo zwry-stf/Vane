@@ -568,6 +568,10 @@ void Vane::AddDefaultThemeTab()
 
 	child->AddCheckbox("Blur Menu Only", (bool*)&Vane::Background::ConstantBuffer->BlurMenuOnly, 0)->SetDisabledInv((bool*)&Vane::Background::ConstantBuffer->BlurEnabled);
 
+	child->AddSlider("Radius", &Vane::Background::BlurRadius, 5.f, 50.f, 0, "%.1f");
+
+	child->AddCheckbox("High Quality", &Vane::Background::HighQuality, 0);
+
 	child->AddSlider("Noise", &Vane::Background::ConstantBuffer->NoiseScale, 0.f, 0.8f, 0, "%.2f");
 
 	child->AddColorpicker("Dim", &Vane::Background::ConstantBuffer->BackgroundColor, true, 0);

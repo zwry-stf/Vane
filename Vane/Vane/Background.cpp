@@ -240,6 +240,14 @@ void Vane::Background::Render()
     ConstantBuffer->MenuPos = XyVec4(x, y, w, h);
     ConstantBuffer->Rounding = Style::Rounding;
     ConstantBuffer->MenuBackgroundColor = Style::Background;
+    // Blur
+    ConstantBuffer->samples = (int)round(BlurRadius * 2.f);
+    ConstantBuffer->LOD = HighQuality ? 0 : 2;
+    ConstantBuffer->sLOD = (1 << ConstantBuffer->LOD);
+    ConstantBuffer->sigma = (float)ConstantBuffer->samples * 0.25f;
+    //static const float gaussianNormalization2D = 1.0 / (6.28318530718 * sigma * sigma);
+    ConstantBuffer->gaussianNormalization1D = 1.0f / (sqrt(6.28318530718f) * ConstantBuffer->sigma * ConstantBuffer->sigma);
+
     ConstantBuffer.Update(renderer.g_pd3dDeviceContext);
     renderer.g_pd3dDeviceContext->PSSetConstantBuffers(0, 1, &ConstantBuffer);
 

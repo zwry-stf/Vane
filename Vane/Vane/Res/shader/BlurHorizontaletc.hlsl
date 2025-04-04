@@ -77,10 +77,10 @@ float4 main(PSInput input) : SV_TARGET
     {
         float totalWeight = 0.0;
         int s = samples / sLOD;
-        float halfSamples = samples * 0.5;
+        float halfSamples = float(s) * 0.5;
         for (int xi = 0; xi < s; xi++)
         {
-            float2 d = float2(xi, 0.0) * sLOD - halfSamples;
+            float2 d = float2(xi - halfSamples, 0.0) * sLOD;
             float weight = gaussian(d);
             float2 offset = d * (1.0 / iResolution);
             blurredColor += weight * inputTexture.SampleLevel(inputSampler, uv + offset, LOD).xyz;

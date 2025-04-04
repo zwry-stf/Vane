@@ -7,10 +7,11 @@ float4 main(PSInput input) : SV_Target
     float2 fragCoord = uv * iResolution;
 
     int s = samples / sLOD;
+    float fs = float(s);
 
     // Determine if the fragment is within the menu region
-    bool posInMenu = fragCoord.x >= MenuPos.x - (float) s && fragCoord.x <= (MenuPos.x + MenuPos.z + (float) s) &&
-                   fragCoord.y >= MenuPos.y - (float) s && fragCoord.y <= (MenuPos.y + MenuPos.w + (float) s);
+    bool posInMenu = fragCoord.x >= MenuPos.x - fs && fragCoord.x <= (MenuPos.x + MenuPos.z + fs) && // We need the pixels left and right for horizontal avarage
+                   fragCoord.y >= MenuPos.y && fragCoord.y <= (MenuPos.y + MenuPos.w);
     bool inMenu = BlurMenuOnly == 0 || posInMenu;
 
     float3 blurredColor = float3(0.0, 0.0, 0.0);
@@ -20,10 +21,10 @@ float4 main(PSInput input) : SV_Target
     if (BlurEnabled != 0 && inMenu)
     {
         float totalWeight = 0.0;
-        float halfSamples = samples * 0.5;
+        float halfSamples = fs * 0.5;
         for (int yi = 0; yi < s; yi++)
         {
-            float2 d = float2(0.0, yi) * sLOD - halfSamples;
+            float2 d = float2(0.0, yi - halfSamples) * sLOD;
             float weight = gaussian(d);
             float2 offset = d * (1.0 / iResolution);
             blurredColor += weight * inputTexture.SampleLevel(inputSampler, uv + offset, LOD).xyz;

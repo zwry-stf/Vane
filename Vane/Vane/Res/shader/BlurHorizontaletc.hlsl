@@ -76,9 +76,9 @@ float4 main(PSInput input) : SV_TARGET
     if (BlurEnabled != 0 && inMenu)
     {
         float totalWeight = 0.0;
-        int s = samples / sLOD;
+        float s = float(samples) / float(sLOD);
         float halfSamples = float(s) * 0.5;
-        for (int xi = 0; xi < s; xi++)
+        for (float xi = 0; xi < s; xi++)
         {
             float2 d = float2(xi - halfSamples, 0.0) * sLOD;
             float weight = gaussian(d);
@@ -120,7 +120,7 @@ float4 main(PSInput input) : SV_TARGET
         float2 center = MenuPos.xy + halfSize;
         float2 q = abs(fragCoord - center) - (halfSize - Rounding);
         float dist = length(max(q, 0.0)) + min(max(q.x, q.y), 0.0) - Rounding + 0.5;
-
+        dist += 2.0; // Looks better on the shadows
         if (dist <= 0.0)
         {
             // We are inside the window
@@ -141,7 +141,8 @@ float4 main(PSInput input) : SV_TARGET
                 blendedColor.a = shadowColor.a + blendedColor.a * (1.0 - shadowColor.a);
             }
         }
-
+        
+        dist -= 2.0; // Restore
         // Apply background
         float aa = fwidth(dist);
         mask = smoothstep(0.0, aa, -dist);

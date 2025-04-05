@@ -83,7 +83,7 @@ public:
 		static void Render();
 
 	public:
-		inline static float BlurRadius = 20.f;
+		inline static float BlurRadius = 30.f;
 		inline static bool HighQuality = true;
 
 		struct ShaderConstants
@@ -99,8 +99,8 @@ public:
 			float NoiseScale  = 0.3f;
 			float Rounding;
 
-			float ShadowSize  = 20.f;
-			float ShadowAlpha = 0.6f;
+			float ShadowSize  = 16.f;
+			float ShadowAlpha = 0.5f;
 
 			float TURB_AMP    = 1.35f;
 			float TURB_NUM    = 8.0;
@@ -117,9 +117,9 @@ public:
 			//static const float gaussianNormalization2D = 1.0 / (6.28318530718 * sigma * sigma);
 			float gaussianNormalization1D;
 
-			XyColor BackgroundColor = XyColor(0.f, 0.f, 0.f, 0.3f);
+			XyColor BackgroundColor = XyColor(0.f, 0.f, 0.f, 0.2f);
 			XyColor MenuBackgroundColor;
-			XyColor AnimationColor  = XyColor(1.f, 1.f, 1.f, 0.2f);
+			XyColor AnimationColor  = XyColor(1.f, 1.f, 1.f, 0.1f);
 		};
 
 		inline static ConstantBuffer<ShaderConstants> ConstantBuffer;

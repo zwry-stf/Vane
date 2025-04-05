@@ -6,11 +6,10 @@ float4 main(PSInput input) : SV_Target
     float2 uv = input.uv;
     float2 fragCoord = uv * iResolution;
 
-    int s = samples / sLOD;
-    float fs = float(s);
+    float s = float(samples) / float(sLOD);
 
     // Determine if the fragment is within the menu region
-    bool posInMenu = fragCoord.x >= MenuPos.x - fs && fragCoord.x <= (MenuPos.x + MenuPos.z + fs) && // We need the pixels left and right for horizontal avarage
+    bool posInMenu = fragCoord.x >= MenuPos.x - s - 1.0 && fragCoord.x <= (MenuPos.x + MenuPos.z + s + 1.0) && // We need the pixels left and right for horizontal avarage
                    fragCoord.y >= MenuPos.y && fragCoord.y <= (MenuPos.y + MenuPos.w);
     bool inMenu = BlurMenuOnly == 0 || posInMenu;
 
@@ -21,8 +20,8 @@ float4 main(PSInput input) : SV_Target
     if (BlurEnabled != 0 && inMenu)
     {
         float totalWeight = 0.0;
-        float halfSamples = fs * 0.5;
-        for (int yi = 0; yi < s; yi++)
+        float halfSamples = s * 0.5;
+        for (float yi = 0; yi < s; yi++)
         {
             float2 d = float2(0.0, yi - halfSamples) * sLOD;
             float weight = gaussian(d);

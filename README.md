@@ -77,8 +77,8 @@ A more detailed Documentation can be found [here](Documentation.md)
 
 ## Images
 
-![image](https://github.com/user-attachments/assets/db23dd11-39f1-4296-9ae9-26988181f917)
-![image](https://github.com/user-attachments/assets/d7f3d86f-7232-458c-b805-8d0f1e57f0c0)
+![image](images/ThemeTab.png)
+![image](images/ConfigTab.png)
 
 ## License
 

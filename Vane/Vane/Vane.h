@@ -317,24 +317,29 @@ public:
 	};
 
 public:
-	inline static int SelectedTab = -1;
-
 	inline static constexpr float MinAlpha = 1.f / 255.f;
+
+protected:
+	// Tabs
+	inline static int SelectedTab = -1;
+	inline static XyVector<Tab*> Tabs;
 
 	// Overlays
 	inline static int OpenedOverlay = -1;
 	inline static XyVector<Overlay*> Overlays;
-
-private:
-	inline static XyVector<Tab*> Tabs;
 
 	inline static int Hovered = -1;
 	inline static int Selected = -1;
 
 	inline static bool Moving = false;
 	inline static XyVec2 MovingOff;
-	friend class ChildTab;
+
+	// Friends
+	friend class Tab;
+	friend class TabNormal;
+	friend class TabConfig;
 	friend class Sidebar;
+	friend class ChildTab;
 };
 
 

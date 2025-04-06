@@ -84,10 +84,11 @@ std::optional<long> Hotkey::WndProc(const uint32_t msg, const uint64_t wParam, i
 	{
 		if (*selected == id)
 			*selected = -1;
-		if (*hovered == id)
-			*hovered = -1;
 		return {};
 	}
+
+	if (*selected != -1 && *selected != id)
+		return {};
 
 	float mouseX = (float)(int16_t)LOWORD(lParam);
 	float mouseY = (float)(int16_t)HIWORD(lParam);
@@ -126,14 +127,6 @@ std::optional<long> Hotkey::WndProc(const uint32_t msg, const uint64_t wParam, i
 				*selected = id;
 			}
 			return S_OK;
-		}
-		else if (msg == WM_MOUSEMOVE && *hovered == id)
-		{
-			*hovered = -1;
-		}
-		else if (msg == WM_LBUTTONDOWN && *selected == id)
-		{
-			*selected = -1;
 		}
 	}
 	return {};

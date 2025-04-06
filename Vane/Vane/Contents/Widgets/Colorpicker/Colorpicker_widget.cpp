@@ -20,7 +20,7 @@ void ColorPickerWidget::Draw(const float x, const float y, const float w, const 
 		Vane::Util::DisableColor(Vane::Util::ConvColor(Vane::Style::Text, alpha), animation_disabled), (strLabel + ": ").c_str()
 	) - x;
 
-	if (!typing)
+	if (*selected != id)
 	{
 		XyColor col = ((ColorPicker*)pOverlays->at(child_id))->getColor();
 		
@@ -50,16 +50,20 @@ void ColorPickerWidget::Draw(const float x, const float y, const float w, const 
 		}
 
 		str_length = hasAlpha ? 9 : 7;
-	}
 
-	if (typing) 
+		// Render
+		color_width = Vane::renderer.AddText(
+			XyVec2(x + label_width, y + (lastH - Vane::Style::TextSize) / 2),
+			Vane::Util::DisableColor(Vane::Util::ConvColor(Vane::Style::Accent, alpha), animation_disabled), buffer.c_str()
+		) - x - label_width;
+	}
+	else
 	{
+		// Render
 		void* out = typing_pos != -1 ? (void*)&selected_char_begin : (void*)&typing_pos;
 		color_width = Vane::renderer.AddTextTest(
 			XyVec2(x + label_width, y + (lastH - Vane::Style::TextSize) / 2),
-			typing ? 
-				Vane::Util::DisableColor(Vane::Util::ConvColor(XyColor(0.8f, 0.8f, 0.8f), alpha), animation_disabled) :
-				Vane::Util::DisableColor(Vane::Util::ConvColor(Vane::Style::Accent, alpha), animation_disabled),
+			Vane::Util::DisableColor(Vane::Util::ConvColor(XyColor(0.8f, 0.8f, 0.8f), alpha), animation_disabled),
 			buffer.c_str(), typing_pos == -1 ? (typed_pos + lastX + label_width) : (float)typing_pos, out, typing_pos == -1 ? 0 : 1
 		) - x - label_width;
 
@@ -69,17 +73,8 @@ void ColorPickerWidget::Draw(const float x, const float y, const float w, const 
 			last_toggle_time = Vane::renderer.data.curr_time;
 		}
 	}
-	else 
-	{
-		color_width = Vane::renderer.AddText(
-			XyVec2(x + label_width, y + (lastH - Vane::Style::TextSize) / 2),
-			typing ? 
-				Vane::Util::DisableColor(Vane::Util::ConvColor(XyColor(0.8f, 0.8f, 0.8f), alpha), animation_disabled) : 
-				Vane::Util::DisableColor(Vane::Util::ConvColor(Vane::Style::Accent, alpha), animation_disabled), buffer.c_str()
-		) - x - label_width;
-	}
 
-	typing_animation = Vane::Util::Lerp(typing_animation, (typing_toggle && typing) ? 1.f : 0.f, Vane::Style::AnimationSpeed * 1.5f);
+	typing_animation = Vane::Util::Lerp(typing_animation, (typing_toggle && *selected == id) ? 1.f : 0.f, Vane::Style::AnimationSpeed * 1.5f);
 
 	if (typing_animation > 0.001f)
 		Vane::renderer.AddRectFilled(
@@ -157,14 +152,9 @@ void ColorPickerWidget::stopTyping()
 	}
 
 	if (!valid)
-	{
-		typing = false;
 		return;
-	}
 
 	((ColorPicker*)pOverlays->at(child_id))->setColor(XyColor(r, g, b, a));
-
-	typing = false;
 }
 
 std::optional<long> ColorPickerWidget::WndProc(const uint32_t msg, const uint64_t wParam, int64_t lParam, const int id, int* hovered, int* selected, int* opened) 
@@ -173,12 +163,16 @@ std::optional<long> ColorPickerWidget::WndProc(const uint32_t msg, const uint64_
 	{
 		if (*selected == id)
 			*selected = -1;
-		if (*hovered == id)
-			*hovered = -1;
-		if (typing)
+		if (*selected == id)
+		{
 			stopTyping();
+			*selected = -1;
+		}
 		return {};
 	}
+
+	if (*selected != -1 && *selected != id)
+		return {};
 
 	float mouseX = (float)(int16_t)LOWORD(lParam);
 	float mouseY = (float)(int16_t)HIWORD(lParam);
@@ -190,11 +184,6 @@ std::optional<long> ColorPickerWidget::WndProc(const uint32_t msg, const uint64_
 			Vane::Cursor::current = Vane::Cursor::text;
 			_hovered = 0;
 			*hovered = id;
-			return S_OK;
-		}
-		else if (*hovered == id && _hovered == 0)
-		{
-			*hovered = -1;
 			return S_OK;
 		}
 	}
@@ -209,17 +198,18 @@ std::optional<long> ColorPickerWidget::WndProc(const uint32_t msg, const uint64_
 			last_toggle_time = GetTickCount64();
 			typing_toggle = true;
 
-			typing = true;
+			*selected = id;
 			return S_OK;
 		}
-		else if (typing) 
+		else if (*selected == id)
 		{
 			stopTyping();
+			*selected = -1;
 			return S_OK;
 		}
 	}
 
-	if (typing && msg == WM_CHAR && str_length <= 9)
+	if (*selected == id && msg == WM_CHAR && str_length <= 9)
 	{ // 0x00000000
 		if ((wParam >= '0' && wParam <= '9') || (wParam >= 'A' && wParam <= 'F') || (wParam >= 'a' && wParam <= 'f'))
 		{
@@ -231,7 +221,7 @@ std::optional<long> ColorPickerWidget::WndProc(const uint32_t msg, const uint64_
 		}
 	}
 
-	if (typing && msg == WM_KEYDOWN) 
+	else if (*selected == id && msg == WM_KEYDOWN)
 	{
 		if (wParam == VK_LEFT)
 		{
@@ -272,13 +262,14 @@ std::optional<long> ColorPickerWidget::WndProc(const uint32_t msg, const uint64_
 		else if (wParam == VK_RETURN || wParam == VK_ESCAPE)
 		{
 			stopTyping();
+			*selected = -1;
 		}
 		return S_OK;
 	}
 
-	if (msg == WM_LBUTTONDOWN || msg == WM_MOUSEMOVE) 
+	else if (msg == WM_LBUTTONDOWN || msg == WM_MOUSEMOVE) 
 	{
-		if (typing)
+		if (*selected == id)
 			return S_OK;
 
 		const float size = default_height + 3.f;
@@ -298,10 +289,6 @@ std::optional<long> ColorPickerWidget::WndProc(const uint32_t msg, const uint64_
 				*opened = child_id;
 			}
 			return S_OK;
-		}
-		else if (msg == WM_MOUSEMOVE && *hovered == id && _hovered == 1) 
-		{
-			*hovered = -1;
 		}
 	}
 	return {};

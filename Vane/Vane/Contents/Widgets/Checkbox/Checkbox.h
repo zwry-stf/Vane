@@ -20,4 +20,5 @@ private:
 	float animation_hovered_child = 0.f;
 	std::string strLabel;
 	bool* pValue;
+	bool selected_type = false; // 0 = value, 1 = child
 };

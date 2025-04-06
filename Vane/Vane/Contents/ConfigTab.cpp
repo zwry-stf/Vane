@@ -123,10 +123,6 @@ std::optional<HRESULT> TabConfig::WndProc(UINT msg, WPARAM wParam, LPARAM lParam
 			Vane::Cursor::current = Vane::Cursor::hand;
 			return S_OK;
 		}
-		else if (*hovered == Tab_Begin + 99)
-		{
-			*hovered = -1;
-		}
 	}
 
 	else if (msg == WM_LBUTTONDOWN)

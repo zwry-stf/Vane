@@ -5,7 +5,7 @@ void ChildWindow::Draw(const int id, int* opened)
 {
 	lastX = Vane::x + xPos;
 	lastY = Vane::y + yPos;
-	lastW = Vane::Style::ChildWindowWidth;
+	lastW = round(Vane::Style::ChildWindowWidth);
 	lastH = Height;
 
 	// Animation
@@ -14,7 +14,7 @@ void ChildWindow::Draw(const int id, int* opened)
 	if (animation < Vane::MinAlpha)
 		return;
 
-	if (!size_init)
+	if (LastChildWindowSize != lastW)
 	{
 		Height = 0.f;
 		for (int i = 0; i < Widgets.size(); i++)
@@ -26,6 +26,7 @@ void ChildWindow::Draw(const int id, int* opened)
 		Height += Vane::Style::TextSize + 25.f;
 
 		lastH = Height;
+		LastChildWindowSize = lastW;
 	}
 
 	if (pos_changed)
@@ -48,13 +49,13 @@ void ChildWindow::Draw(const int id, int* opened)
 	Vane::renderer.AddShadowRect(
 		XyVec2(lastX, lastY),
 		XyVec2(lastX + lastW, lastY + lastH),
-		Vane::Util::ConvColor(Vane::Style::Background, animation), Vane::Style::Rounding
+		Vane::Util::ConvColor(XyColor(Vane::Style::Background.r, Vane::Style::Background.g, Vane::Style::Background.b, Vane::Style::ChildWindowAlpha), animation), Vane::Style::Rounding
 	);
 
 	Vane::renderer.AddRectFilled(
 		XyVec2(lastX, lastY),
 		XyVec2(lastX + lastW, lastY + lastH),
-		Vane::Util::ConvColor(Vane::Style::Background, animation), Vane::Style::Rounding
+		Vane::Util::ConvColor(XyColor(Vane::Style::Background.r, Vane::Style::Background.g, Vane::Style::Background.b, Vane::Style::ChildWindowAlpha), animation), Vane::Style::Rounding
 	);
 
 	// Text

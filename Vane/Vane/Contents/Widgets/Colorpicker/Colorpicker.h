@@ -67,7 +67,6 @@ public:
 	void stopTyping();
 private: // Typing
 	std::string buffer;
-	bool typing = 0.f;
 	int typing_pos = 0; // Starting from last
 	float typing_animation = 0.f;
 	bool typing_toggle = false;

@@ -47,11 +47,6 @@ std::optional<long> Tab::WndProc(uint32_t msg, uint64_t wParam, int64_t lParam, 
 			Vane::Cursor::current = Vane::Cursor::hand;
 			return S_OK;
 		}
-		else if (*hovered == id)
-		{
-			*hovered = -1;
-			return {};
-		}
 	}
 
 	else if (msg == WM_LBUTTONDOWN)

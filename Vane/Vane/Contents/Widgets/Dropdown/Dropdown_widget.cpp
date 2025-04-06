@@ -57,10 +57,11 @@ std::optional<long> DropdownWidget::WndProc(const uint32_t msg, const uint64_t w
 {
 	if (disabled && (*disabled == !dis_inv))
 	{
-		if (*hovered == id)
-			*hovered = -1;
 		return {};
 	}
+
+	if (*selected != -1 && *selected != id)
+		return {};
 
 	float mouseX = (float)(int16_t)LOWORD(lParam);
 	float mouseY = (float)(int16_t)HIWORD(lParam);
@@ -82,10 +83,6 @@ std::optional<long> DropdownWidget::WndProc(const uint32_t msg, const uint64_t w
 				*opened = child_id;
 			}
 			return S_OK;
-		}
-		else if (msg == WM_MOUSEMOVE && *hovered == id) 
-		{
-			*hovered = -1;
 		}
 	}
 

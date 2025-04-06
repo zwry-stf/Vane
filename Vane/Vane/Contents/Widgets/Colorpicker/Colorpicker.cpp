@@ -28,7 +28,7 @@ void ColorPicker::Draw(const int id, int* opened)
 {
 	lastX = Vane::x + xPos;
 	lastY = Vane::y + yPos;
-	lastH = Vane::Style::ChildWindowWidth / 1.5f;
+	lastH = round(Vane::Style::ChildWindowWidth / 1.5f);
 
 
 	// Animation
@@ -37,9 +37,9 @@ void ColorPicker::Draw(const int id, int* opened)
 	if (animation < Vane::MinAlpha)
 		return;
 
-	space_offset = lastH / 12.f;
-	square_size = lastH - space_offset * 2.f;
-	bar_width = square_size / 8.5f;
+	space_offset = round(lastH / 12.f);
+	square_size = round(lastH - space_offset * 2.f);
+	bar_width = round(square_size / 8.5f);
 
 	lastW = square_size + space_offset * (hasAlpha ? 4.f : 3.f) + bar_width * (hasAlpha ? 2.f : 1.f); // space for alpha and hue bar
 
@@ -66,11 +66,18 @@ void ColorPicker::Draw(const int id, int* opened)
 		}
 	}
 
+
 	// Background
+	Vane::renderer.AddShadowRect(
+		XyVec2(lastX, lastY),
+		XyVec2(lastX + lastW, lastY + lastH),
+		Vane::Util::ConvColor(XyColor(Vane::Style::Background.r, Vane::Style::Background.g, Vane::Style::Background.b, Vane::Style::ChildWindowAlpha), animation), Vane::Style::Rounding
+	);
+
 	Vane::renderer.AddRectFilled(
-		XyVec2(lastX, lastY), 
-		XyVec2(lastX + lastW, lastY + lastH), 
-		Vane::Util::ConvColor(Vane::Style::Background, animation), Vane::Style::Rounding
+		XyVec2(lastX, lastY),
+		XyVec2(lastX + lastW, lastY + lastH),
+		Vane::Util::ConvColor(XyColor(Vane::Style::Background.r, Vane::Style::Background.g, Vane::Style::Background.b, Vane::Style::ChildWindowAlpha), animation), Vane::Style::Rounding
 	);
 
 	// Border

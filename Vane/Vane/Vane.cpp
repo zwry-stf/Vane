@@ -564,17 +564,19 @@ void Vane::AddDefaultThemeTab()
 
 	child->AddGroupTitle("Background", 0);
 
-	child->AddCheckbox("Blur", (bool*)&Vane::Background::ConstantBuffer->BlurEnabled, 0);
+	auto child_window = child->AddChildWindow("Blur");
 
-	child->AddCheckbox("Blur Menu Only", (bool*)&Vane::Background::ConstantBuffer->BlurMenuOnly, 0)->SetDisabledInv((bool*)&Vane::Background::ConstantBuffer->BlurEnabled);
+	child_window->AddCheckbox("Blur Menu Only", (bool*)&Background::ConstantBuffer->BlurMenuOnly)->SetDisabledInv((bool*)&Background::ConstantBuffer->BlurEnabled);
 
-	child->AddSlider("Radius", &Vane::Background::BlurRadius, 5.f, 50.f, 0, "%.1f");
+	child_window->AddSlider("Radius", &Background::BlurRadius, 5.f, 50.f, "%.1f");
 
-	child->AddCheckbox("High Quality", &Vane::Background::HighQuality, 0);
+	child_window->AddCheckbox("High Quality", &Background::HighQuality);
 
-	child->AddSlider("Noise", &Vane::Background::ConstantBuffer->NoiseScale, 0.f, 0.8f, 0, "%.2f");
+	child->AddCheckbox("Blur", (bool*)&Background::ConstantBuffer->BlurEnabled, 0)->LinkTo(child_window);
 
-	child->AddColorpicker("Dim", &Vane::Background::ConstantBuffer->BackgroundColor, true, 0);
+	child->AddSlider("Noise", &Background::ConstantBuffer->NoiseScale, 0.f, 0.8f, 0, "%.2f");
+
+	child->AddColorpicker("Dim", &Background::ConstantBuffer->BackgroundColor, true, 0);
 
 	child->EndGroup(0);
 
@@ -586,25 +588,27 @@ void Vane::AddDefaultThemeTab()
 
 	child->AddSlider("Child Window Size", &Style::ChildWindowWidth, 100.f, 400.f, 1, "%.1f");
 
-	child->AddSlider("Shadow Size", &Vane::Background::ConstantBuffer->ShadowSize, 2.f, 100.f, 1, "%.1f");
+	child->AddSlider("Child Window Bg Alpha", &Style::ChildWindowAlpha, 0.f, 1.f, 1, "%.2f");
 
-	child->AddSlider("Shadow Alpha", &Vane::Background::ConstantBuffer->ShadowAlpha, 0.f, 1.f, 1, "%.2f");
+	child->AddSlider("Shadow Size", &Background::ConstantBuffer->ShadowSize, 2.f, 100.f, 1, "%.1f");
+
+	child->AddSlider("Shadow Alpha", &Background::ConstantBuffer->ShadowAlpha, 0.f, 1.f, 1, "%.2f");
 
 	child->EndGroup(1);
 
 	child->AddGroupTitle("Menu Background", 1);
 
-	child->AddColorpicker("Color", &Vane::Background::ConstantBuffer->AnimationColor, true, 1);
+	child->AddColorpicker("Color", &Background::ConstantBuffer->AnimationColor, true, 1);
 
-	child->AddSlider("Amplitude", &Vane::Background::ConstantBuffer->TURB_AMP, 0.05f, 2.f, 1, "%.2f");
+	child->AddSlider("Amplitude", &Background::ConstantBuffer->TURB_AMP, 0.05f, 2.f, 1, "%.2f");
 
-	child->AddSlider("Number", &Vane::Background::ConstantBuffer->TURB_NUM, 1.f, 20.f, 1, "%.0f");
+	child->AddSlider("Number", &Background::ConstantBuffer->TURB_NUM, 1.f, 20.f, 1, "%.0f");
 
-	child->AddSlider("Speed", &Vane::Background::ConstantBuffer->TURB_SPEED, 0.05f, 2.f, 1, "%.2f");
+	child->AddSlider("Speed", &Background::ConstantBuffer->TURB_SPEED, 0.05f, 2.f, 1, "%.2f");
 
-	child->AddSlider("Frequency", &Vane::Background::ConstantBuffer->TURB_FREQ, 0.5f, 10.f, 1, "%.2f");
+	child->AddSlider("Frequency", &Background::ConstantBuffer->TURB_FREQ, 0.5f, 10.f, 1, "%.2f");
 
-	child->AddSlider("Exponent", &Vane::Background::ConstantBuffer->TURB_EXP, 0.5f, 10.f, 1, "%.2f");
+	child->AddSlider("Exponent", &Background::ConstantBuffer->TURB_EXP, 0.5f, 10.f, 1, "%.2f");
 
 	child->EndGroup(1);
 }

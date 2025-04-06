@@ -32,8 +32,7 @@ private:
 	XyVector<Widget*> Widgets;
 	XyVector<Overlay*> Overlays;
 	float WidgetPos = 0.f;
-
-	bool size_init = false;
+	float LastChildWindowSize = 0.f;
 	float height = 0.f;
 
 private:

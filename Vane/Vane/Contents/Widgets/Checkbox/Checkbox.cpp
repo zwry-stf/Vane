@@ -95,11 +95,13 @@ std::optional<long> Checkbox::WndProc(const uint32_t msg, const uint64_t wParam,
 {
 	if (disabled && (*disabled == !dis_inv))
 	{
-		if (*hovered == id)
-			*hovered = -1;
+		if (*selected == id)
+			*selected = -1;
 		return {};
 	}
 
+	if (*selected != -1 && *selected != id)
+		return {};
 
 	float mouseX = (float)(int16_t)LOWORD(lParam);
 	float mouseY = (float)(int16_t)HIWORD(lParam);
@@ -109,20 +111,46 @@ std::optional<long> Checkbox::WndProc(const uint32_t msg, const uint64_t wParam,
 		float size = default_height + 3.f;
 		if (isInRect(mouseX, mouseY, lastX + lastW - size - 3.f, lastY + size / 5.f, size, lastH - size / 2.5f))
 		{
-			*pValue = !*pValue;
+			*selected = id;
+			selected_type = false;
 			return S_OK;
 		}
 		// Child
 		if (child_id != -1 && isInRect(mouseX, mouseY, lastX + lastW - size - 7.f - lastH + size / 2.5f, lastY + size / 5.f, lastH - size / 2.5f, lastH - size / 2.5f))
 		{
-			pOverlays->at(child_id)->SetPos(lastX + lastW - size - 7.f - size / 5.f - Vane::x, lastY + size / 2 - Vane::y);
-			*opened = child_id;
+			*selected = id;
+			selected_type = true;
 			return S_OK;
 		}
 	}
 
+	else if (msg == WM_LBUTTONUP && *selected == id)
+	{
+		*selected = -1;
+
+		float size = default_height + 3.f;
+		if (isInRect(mouseX, mouseY, lastX + lastW - size - 3.f, lastY + size / 5.f, size, lastH - size / 2.5f) && selected_type == false)
+		{
+			*pValue = !*pValue;
+		}
+		// Child
+		else if (child_id != -1 && isInRect(mouseX, mouseY, lastX + lastW - size - 7.f - lastH + size / 2.5f, lastY + size / 5.f, lastH - size / 2.5f, lastH - size / 2.5f) && selected_type == true)
+		{
+			pOverlays->at(child_id)->SetPos(lastX + lastW - size - 7.f - size / 5.f - Vane::x, lastY + size / 2 - Vane::y);
+			*opened = child_id;
+		}
+
+		return S_OK;
+	}
+
 	else if (msg == WM_MOUSEMOVE) 
 	{
+		if (*selected == id)
+		{
+			*hovered = id;
+			Vane::Cursor::current = Vane::Cursor::hand;
+			return S_OK;
+		}
 		float size = default_height + 3.f;
 		if (isInRect(mouseX, mouseY, lastX + lastW - size - 3.f, lastY + size / 5.f, size, lastH - size / 2.5f))
 		{
@@ -135,10 +163,6 @@ std::optional<long> Checkbox::WndProc(const uint32_t msg, const uint64_t wParam,
 			*hovered = id + HOVER_OFF_CHILD;
 			Vane::Cursor::current = Vane::Cursor::hand;
 			return S_OK;
-		}
-		else if (*hovered == id || *hovered == id + HOVER_OFF_CHILD)
-		{
-			*hovered = -1;
 		}
 	}
 	return {};

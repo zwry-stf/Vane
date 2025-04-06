@@ -87,8 +87,8 @@ public:
 
 	void SetPos(float x, float y)
 	{ 
-		xPos = x; 
-		yPos = y;
+		xPos = roundf(x); 
+		yPos = roundf(y);
 		pos_changed = true;
 	} // Should be called by parent
 

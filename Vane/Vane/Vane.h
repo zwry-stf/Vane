@@ -44,6 +44,7 @@ public:
 		inline static float SideBarWidth     = 140.f;
 
 		inline static float ChildWindowWidth = 220.f;
+		inline static float ChildWindowAlpha = 0.8f;
 
 		inline static float AnimationSpeed   = 8.f;
 

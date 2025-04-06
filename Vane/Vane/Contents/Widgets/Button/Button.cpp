@@ -69,8 +69,6 @@ std::optional<long> Button::WndProc(const uint32_t msg, const uint64_t wParam, i
 	{
 		if (*selected == id)
 			*selected = -1;
-		if (*hovered == id)
-			*hovered = -1;
 		return {};
 	}
 
@@ -82,6 +80,17 @@ std::optional<long> Button::WndProc(const uint32_t msg, const uint64_t wParam, i
 		*selected = -1;
 		pCallback(pThisPtr);
 		return S_OK;
+	}
+
+	if (msg == WM_MOUSEMOVE)
+	{
+		const float size = lastW / 2.2f;
+		if (isInRect(mouseX, mouseY, lastX + lastW - size - 3.f, lastY + 2.f, size, lastH - 4.f))
+		{
+			*hovered = id;
+			Vane::Cursor::current = Vane::Cursor::hand;
+			return S_OK;
+		}
 	}
 
 	if (msg == WM_LBUTTONDOWN || msg == WM_MOUSEMOVE)
@@ -100,10 +109,6 @@ std::optional<long> Button::WndProc(const uint32_t msg, const uint64_t wParam, i
 				*selected = id;
 			}
 			return S_OK;
-		}
-		else if (msg == WM_MOUSEMOVE && *hovered == id)
-		{
-			*hovered = -1;
 		}
 	}
 	return {};

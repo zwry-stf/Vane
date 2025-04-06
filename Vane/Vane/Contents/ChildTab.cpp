@@ -242,11 +242,6 @@ std::optional<long> ChildTab::WndProc(uint32_t msg, uint64_t wParam, int64_t lPa
 			Vane::Cursor::current = Vane::Cursor::hand;
 			return S_OK;
 		}
-		else if (*hovered == id)
-		{
-			*hovered = -1;
-			return {};
-		}
 	}
 
 	if (id != *selected)
@@ -269,15 +264,21 @@ std::optional<long> ChildTab::WndProc(uint32_t msg, uint64_t wParam, int64_t lPa
 		}
 	}
 
+	// Widgets
+	int hovered_temp = -1; // Prevent visual (small) issues when multithreading
 	for (int i = 0; i < Widgets.Size; i++)
 	{
 		if (Widgets[i]->endGroup || Widgets[i]->isTitle)
 			continue;
 
-		auto ret = Widgets[i]->WndProc(msg, wParam, lParam, i, &Hovered, &Selected, &Vane::OpenedOverlay);
+		auto ret = Widgets[i]->WndProc(msg, wParam, lParam, i, &hovered_temp, &Selected, &Vane::OpenedOverlay);
 		if (ret.has_value())
+		{
+			Hovered = hovered_temp;
 			return ret;
+		}
 	}
+	Hovered = hovered_temp;
 
 	return {};
 }

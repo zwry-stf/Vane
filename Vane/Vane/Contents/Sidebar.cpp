@@ -89,15 +89,9 @@ std::optional<long> Sidebar::WndProc(uint32_t msg, uint64_t wParam, int64_t lPar
             Vane::Cursor::current = Vane::Cursor::hand;
             return S_OK;
         }
-        else if (*hovered == Sidebar_Begin + ID_Icon)
-		{
-			*hovered = -1;
-            return {};
-		}
         else if (open && x > (Vane::x + Vane::Style::SideBarColl + (Vane::Style::SideBarWidth - Vane::Style::SideBarColl) * animation))
         {
-			*hovered = -1;
-			return S_OK;
+			return S_OK; // Block input if open
         }
     }
 

@@ -63,20 +63,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, uint32_t msg, uint64_t wParam, int64_t lPara
 
         resize = 0;
     }
-    else if (msg == WM_SETCURSOR)
-    {
-        if (Vane::open && Vane::Cursor::actual.load() != Vane::Cursor::arrow)
-        {
-            Vane::Cursor::Set();
-            return S_OK;
-        }
-        else
-        {
-            SetCursor(Vane::Cursor::arrow);
-            return DefWindowProc(hWnd, msg, wParam, lParam);
-        }
-
-    }
 
     auto ret = Vane::WndProc(msg, wParam, lParam);
     if (ret.has_value())
@@ -242,6 +228,17 @@ int WINAPI main()
         {
             TranslateMessage(&msg);
             DispatchMessage(&msg);
+        }
+
+        // Cursor
+        if (Vane::open && Vane::Cursor::actual.load() != Vane::Cursor::arrow)
+        {
+            Vane::Cursor::Set();
+        }
+        else
+        {
+            SetCursor(Vane::Cursor::arrow);
+            DefWindowProc(g_hWnd, WM_SETCURSOR, 0, MAKELPARAM((int16_t)Vane::Data::LastCursorPos.x, (int16_t)Vane::Data::LastCursorPos.y));
         }
     }
     should_exit = true;

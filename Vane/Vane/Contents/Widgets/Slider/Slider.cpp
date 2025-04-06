@@ -59,10 +59,11 @@ std::optional<long>  Slider::WndProc(const uint32_t msg, const uint64_t wParam, 
 	{
 		if (*selected == id)
 			*selected = -1;
-		if (*hovered == id)
-			*hovered = -1;
 		return {};
 	}
+
+	if (*selected != -1 && *selected != id)
+		return {};
 
 	float mouseX = (float)(int16_t)LOWORD(lParam);
 	float mouseY = (float)(int16_t)HIWORD(lParam);
@@ -104,10 +105,6 @@ std::optional<long>  Slider::WndProc(const uint32_t msg, const uint64_t wParam, 
 			*hovered = id;
 			Vane::Cursor::current = Vane::Cursor::size;
 			return S_OK;
-		}
-		else if (*hovered == id)
-		{
-			*hovered = -1;
 		}
 	}
 	return {};

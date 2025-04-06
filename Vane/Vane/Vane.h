@@ -71,12 +71,12 @@ public:
 		inline static float SideBarWidth     = 140.f;
 
 		inline static float ChildWindowWidth = 220.f;
-		inline static float ChildWindowAlpha = 0.8f;
 
 		inline static float AnimationSpeed   = 8.f;
 
 		// Colors						     
 		inline static XyColor Background     = XyColor(0.1f, 0.1f, 0.1f, 0.35f);
+		inline static XyColor CWBackground   = XyColor(0.1f, 0.1f, 0.1f, 0.8f);
 		inline static XyColor Text           = XyColor(0xE0, 0xE8, 0xFF);
 		inline static XyColor Icon           = XyColor(0xE0, 0xE8, 0xFF);
 		inline static XyColor Accent         = XyColor(0xB2, 0xC6, 0xFF);

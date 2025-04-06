@@ -550,6 +550,8 @@ void Vane::AddDefaultThemeTab()
 
 	child->AddColorpicker("Background", &Style::Background, true, 0);
 
+	child->AddColorpicker("Child Window Background", &Style::CWBackground, true, 0);
+
 	child->AddColorpicker("Accent", &Style::Accent, true, 0);
 
 	child->AddColorpicker("Accent 2", &Style::Accent2, true, 0);
@@ -587,8 +589,6 @@ void Vane::AddDefaultThemeTab()
 	child->AddSlider("Rounding", &Style::Rounding, 0.f, 20.f, 1, "%.1f");
 
 	child->AddSlider("Child Window Size", &Style::ChildWindowWidth, 100.f, 400.f, 1, "%.1f");
-
-	child->AddSlider("Child Window Bg Alpha", &Style::ChildWindowAlpha, 0.f, 1.f, 1, "%.2f");
 
 	child->AddSlider("Shadow Size", &Background::ConstantBuffer->ShadowSize, 2.f, 100.f, 1, "%.1f");
 

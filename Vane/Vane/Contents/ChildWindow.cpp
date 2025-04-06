@@ -49,13 +49,13 @@ void ChildWindow::Draw(const int id, int* opened)
 	Vane::renderer.AddShadowRect(
 		XyVec2(lastX, lastY),
 		XyVec2(lastX + lastW, lastY + lastH),
-		Vane::Util::ConvColor(XyColor(Vane::Style::Background.r, Vane::Style::Background.g, Vane::Style::Background.b, Vane::Style::ChildWindowAlpha), animation), Vane::Style::Rounding
+		Vane::Util::ConvColor(Vane::Style::CWBackground, animation), Vane::Style::Rounding
 	);
 
 	Vane::renderer.AddRectFilled(
 		XyVec2(lastX, lastY),
 		XyVec2(lastX + lastW, lastY + lastH),
-		Vane::Util::ConvColor(XyColor(Vane::Style::Background.r, Vane::Style::Background.g, Vane::Style::Background.b, Vane::Style::ChildWindowAlpha), animation), Vane::Style::Rounding
+		Vane::Util::ConvColor(Vane::Style::CWBackground, animation), Vane::Style::Rounding
 	);
 
 	// Text

@@ -34,7 +34,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, uint32_t msg, uint64_t wParam, int64_t lPara
     }
     else if (msg == WM_MOUSEMOVE)
     {
-        return Vane::open ? S_OK : DefWindowProc(hWnd, msg, wParam, lParam);
+        return Vane::IsOpen ? S_OK : DefWindowProc(hWnd, msg, wParam, lParam);
     }
     else if (msg == WM_SIZE && wParam != SIZE_MINIMIZED && render_started)
     {
@@ -231,7 +231,7 @@ int WINAPI main()
         }
 
         // Cursor
-        if (Vane::open && Vane::Cursor::actual.load() != Vane::Cursor::arrow)
+        if (Vane::IsOpen && Vane::Cursor::actual.load() != Vane::Cursor::arrow)
         {
             Vane::Cursor::Set();
         }

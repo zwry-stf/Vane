@@ -163,7 +163,7 @@ bool Vane::Render()
 		}
 	}
 
-	animation = Util::Lerp(animation, open ? 1.f : 0.f, Style::AnimationSpeed);
+	Animation = Util::Lerp(Animation, IsOpen ? 1.f : 0.f, Style::AnimationSpeed);
 
 	{
 		static XyVec2 old_size = { 0.f, 0.f };
@@ -213,7 +213,7 @@ bool Vane::Render()
 	x = roundf(x);
 	y = roundf(y);
 
-	if (animation < MinAlpha)
+	if (Animation < MinAlpha)
 		goto skipRender;
 
 	// Background
@@ -286,13 +286,13 @@ std::optional<long> Vane::WndProc(uint32_t msg, uint64_t wParam, int64_t lParam)
 	{
 		if (wParam == VK_INSERT)
 		{
-			open = !open;
+			IsOpen = !IsOpen;
 			// Enable/Disable Mouse here
 			return S_OK;
 		}
 	}
 
-	if (!open)
+	if (!IsOpen)
 		return {};
 
 	if (msg == WM_MOUSEWHEEL)
@@ -358,7 +358,7 @@ std::optional<long> Vane::WndProc(uint32_t msg, uint64_t wParam, int64_t lParam)
 	{
 		if (wParam == VK_ESCAPE)
 		{
-			open = false;
+			IsOpen = false;
 			// Disable Mouse here
 			return S_OK;
 		}
@@ -402,12 +402,12 @@ XyColor Vane::Util::ConvColorEx(const XyColor& col, float animation)
 
 XyColor Vane::Util::ConvColor(const XyColor& col)
 {
-	return ConvColorEx(col, animation);
+	return ConvColorEx(col, Animation);
 }
 
 XyColor Vane::Util::ConvColor(const XyColor& col, float _animation)
 {
-	return ConvColorEx(col, animation * _animation);
+	return ConvColorEx(col, Animation * _animation);
 }
 
 XyColor Vane::Util::DisableColor(const XyColor& col, float t)

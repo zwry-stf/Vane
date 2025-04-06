@@ -22,14 +22,14 @@ void Slider::Draw(const float x, const float y, const float w, const float alpha
 		return;
 
 	// Text
-	char buffer[96];  // Large enough for most labels and values
+	float end = Vane::renderer.AddText(XyVec2(x, y), 
+		Vane::Util::DisableColor(Vane::Util::ConvColor(Vane::Style::Text, alpha), animation_disabled), (strLabel + ": ").c_str());
 
-	int length = std::snprintf(buffer, sizeof(buffer), "%s: %s", strLabel.c_str(), strFormat.c_str());
+	char buffer[30] = { 0 }; // Should be enough
+	std::snprintf(buffer, sizeof(buffer), strFormat.c_str(), *pValue);
 
-	std::snprintf(buffer + length - strFormat.length(), sizeof(buffer) - length + strFormat.length(), strFormat.c_str(), *pValue);
-
-	Vane::renderer.AddText(XyVec2(x, y), 
-		Vane::Util::DisableColor(Vane::Util::ConvColor(Vane::Style::Text, alpha), animation_disabled), buffer);
+	Vane::renderer.AddText(XyVec2(end, y),
+		Vane::Util::DisableColor(Vane::Util::ConvColor(Vane::Style::Accent, alpha), animation_disabled), buffer);
 
 	// Line
 	const float circle_width = default_height - Vane::Style::TextSize - 4.f;

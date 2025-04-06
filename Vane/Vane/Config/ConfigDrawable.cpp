@@ -62,7 +62,7 @@ void ConfigDrawable::Render(float x, float y, float w, float alpha, int id, int*
 	if (last_string_width < 0.f)
 		last_string_width = 0.f;
 
-	if (blinking_animation * Vane::animation > Vane::MinAlpha)
+	if (blinking_animation * Vane::Animation > Vane::MinAlpha)
 	{
 		Vane::renderer.AddRectFilled(XyVec2(out_pos, lastY + (lastH - Vane::Style::TextSize) / 2.f),
 			XyVec2(out_pos + 2.f, lastY + (lastH + Vane::Style::TextSize) / 2.f), Vane::Util::ConvColor(Vane::Style::Accent, blinking_animation * alpha));

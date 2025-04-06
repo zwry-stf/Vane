@@ -25,6 +25,33 @@ enum ItemIds
 
 class Vane {
 public:
+	static bool Init(IDXGISwapChain* swapchain, const XyVec2 menuSize = XyVec2(800.f, 550.f));
+	static void Destroy();
+
+	static bool Render();
+	static std::optional<long> WndProc(uint32_t msg, uint64_t wParam, int64_t lParam);
+
+	// Add Widgets
+	static TabNormal* AddTab(const std::string& text);
+	static void AddLabel(const std::string& text);
+	static void AddConfigTab(const std::string& text);
+	static void AddDefaultThemeTab();
+
+	static TabNormal* LastTab();
+
+public:
+	inline static bool IsOpen = true;
+	inline static float Animation = 0.f;
+
+	inline static bool Initialized = false;
+	inline static bool RenderingStarted = false;
+
+	inline static float x = -1.f;
+	inline static float y = -1.f;
+	inline static float w = 0.f;
+	inline static float h = 0.f;
+
+public:
 	inline static _Xyphra renderer;
 
 	class Style {
@@ -49,7 +76,7 @@ public:
 		inline static float AnimationSpeed   = 8.f;
 
 		// Colors						     
-		inline static XyColor Background     = XyColor(0.1f, 0.1f, 0.1f, 0.65f);
+		inline static XyColor Background     = XyColor(0.1f, 0.1f, 0.1f, 0.35f);
 		inline static XyColor Text           = XyColor(0xE0, 0xE8, 0xFF);
 		inline static XyColor Icon           = XyColor(0xE0, 0xE8, 0xFF);
 		inline static XyColor Accent         = XyColor(0xB2, 0xC6, 0xFF);
@@ -290,48 +317,24 @@ public:
 	};
 
 public:
-	static bool Init(IDXGISwapChain* swapchain, const XyVec2 menuSize = XyVec2(800.f, 550.f));
-	static void Destroy();
-
-	static bool Render();
-	static std::optional<long> WndProc(uint32_t msg, uint64_t wParam, int64_t lParam);
-
-	// Add Widgets
-	static TabNormal* AddTab(const std::string& text);
-	static void AddLabel(const std::string& text);
-	static void AddConfigTab(const std::string& text);
-	static void AddDefaultThemeTab();
-
-	static TabNormal* LastTab();
-
-public:
-	inline static bool open = true;
-	inline static float animation = 0.f;
-
-	inline static bool Initialized = false;
-	inline static bool RenderingStarted = false;
-
-	inline static float x = -1.f;
-	inline static float y = -1.f;
-	inline static float w = 0.f;
-	inline static float h = 0.f;
-
-	inline static XyVector<Tab*> Tabs;
 	inline static int SelectedTab = -1;
 
 	inline static constexpr float MinAlpha = 1.f / 255.f;
 
-public:
 	// Overlays
 	inline static int OpenedOverlay = -1;
 	inline static XyVector<Overlay*> Overlays;
 
 private:
+	inline static XyVector<Tab*> Tabs;
+
 	inline static int Hovered = -1;
 	inline static int Selected = -1;
 
 	inline static bool Moving = false;
 	inline static XyVec2 MovingOff;
+	friend class ChildTab;
+	friend class Sidebar;
 };
 
 

@@ -114,7 +114,7 @@ void TabNormal::Render(float x, float y, float w, int id, int* hovered, int* sel
 
 	for (int i = 0; i < ChildTabs.Size; i++)
 	{
-		xPos += ChildTabs[i]->Render(xPos, Vane::y, animation * Vane::animation, i, hovered, &SelectedChild);
+		xPos += ChildTabs[i]->Render(xPos, Vane::y, animation * Vane::Animation, i, hovered, &SelectedChild);
 	}
 }
 

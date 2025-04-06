@@ -235,7 +235,7 @@ void Vane::Background::Render()
     renderer.g_pd3dDeviceContext->PSSetSamplers(0, 1, &m_pSamplerState);
 
     ConstantBuffer->iResolution = renderer.data.display_size;
-    ConstantBuffer->Animation = animation;
+    ConstantBuffer->Animation = Animation;
     ConstantBuffer->iTime += renderer.data.delta_time;
     ConstantBuffer->MenuPos = XyVec4(x, y, w, h);
     ConstantBuffer->Rounding = Style::Rounding;

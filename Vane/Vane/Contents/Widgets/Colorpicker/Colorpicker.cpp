@@ -66,6 +66,7 @@ void ColorPicker::Draw(const int id, int* opened)
 		}
 	}
 
+	Vane::renderer.PushClipRect(XyVec2(lastX - 50.f, lastY - 50.f), XyVec2(lastX + lastW + 50.f, lastY + lastH + 50.f)); // Remove Main Cliprect
 
 	// Background
 	Vane::renderer.AddShadowRect(
@@ -160,6 +161,8 @@ void ColorPicker::Draw(const int id, int* opened)
 		XyVec2(lastX + lastH + space_offset + bar_width * 2.f, lastY + space_offset + (square_size - 2.f) * (1.f - hsv.a) + 2.f), 
 		Vane::Util::ConvColor(Vane::Style::Highlight, animation)
 	);
+
+	Vane::renderer.PopClipRect();
 }
 
 #define MOVING_SQUARE 0

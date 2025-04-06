@@ -29,8 +29,8 @@ public:
     float x, y;
 
     /// 
-    XyVec2() : x(0), y(0) {};
-    XyVec2(float x, float y) : x(x), y(y) {};
+    constexpr XyVec2() : x(0), y(0) {};
+    constexpr XyVec2(float x, float y) : x(x), y(y) {};
 
     XyVec2 operator+(const XyVec2& other) const { return XyVec2(x + other.x, y + other.y); }
     XyVec2 operator+=(const XyVec2& other) { x += other.x; y += other.y; return *this; }

@@ -44,13 +44,13 @@ void ChildWindow::Draw(const int id, int* opened)
 		}
 	}
 
+	Vane::renderer.PushClipRect(XyVec2(lastX - 50.f, lastY - 50.f), XyVec2(lastX + lastW + 50.f, lastY + lastH + 50.f));
 
 	// Background
 	Vane::renderer.AddShadowRect(
 		XyVec2(lastX, lastY),
 		XyVec2(lastX + lastW, lastY + lastH),
-		Vane::Util::ConvColor(Vane::Style::CWBackground, animation), Vane::Style::Rounding
-	);
+		Vane::Util::ConvColor(Vane::Style::CWBackground, animation), Vane::Style::Rounding);
 
 	Vane::renderer.AddRectFilled(
 		XyVec2(lastX, lastY),
@@ -94,6 +94,8 @@ void ChildWindow::Draw(const int id, int* opened)
 	{
 		Overlays[i]->Draw(i, &Opened);
 	}
+
+	Vane::renderer.PopClipRect();
 }
 
 std::optional<long> ChildWindow::WndProc(const uint32_t msg, const uint64_t wParam, int64_t lParam, const int id, int* opened)

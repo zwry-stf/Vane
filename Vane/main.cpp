@@ -32,7 +32,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, uint32_t msg, uint64_t wParam, int64_t lPara
         PostQuitMessage(0);
         return 0;
     }
-    else if (msg == WM_MOUSEMOVE)
+    else if (msg == WM_MOUSEMOVE || msg == WM_LBUTTONUP)
     {
         return Vane::IsOpen ? S_OK : DefWindowProc(hWnd, msg, wParam, lParam);
     }
@@ -54,7 +54,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, uint32_t msg, uint64_t wParam, int64_t lPara
             return S_OK;
         }
         
-        if (!Vane::Init(g_pSwapChain, XyVec2(800.f, 550.f)))
+        if (!Vane::Init(g_pSwapChain))
         {
             should_exit = true;
             XY_ASSERT(false && "Failed to resize\n" && Vane::Errors::Get().c_str());
@@ -255,6 +255,7 @@ void AddConfig()
 {
 	/// Menu
 	AddCfg(Vane::Style::Background);
+	AddCfg(Vane::Style::CWBackground);
 	AddCfg(Vane::Style::Text);
 	AddCfg(Vane::Style::Accent);
 	AddCfg(Vane::Style::Accent2);

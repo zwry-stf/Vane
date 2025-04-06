@@ -7,8 +7,8 @@
 
 bool Vane::Init(IDXGISwapChain* swapchain, const XyVec2 menuSize)
 {
-	w = menuSize.x;
-	h = menuSize.y;
+	w = menuSize.x > Style::MinSize.x ? menuSize.x : Style::DefaultSize.x;
+	h = menuSize.y > Style::MinSize.y ? menuSize.y : Style::DefaultSize.y;
 
 	if (Initialized)
 	{
@@ -162,6 +162,15 @@ bool Vane::Render()
 			WndProc(WM_MOUSEMOVE, 0, MAKELPARAM((int16_t)pt.x, (int16_t)pt.y));
 		}
 	}
+	// WM_LBUTTONUP message
+	if (WaitForMouseUp)
+	{
+		if (!(GetAsyncKeyState(VK_LBUTTON) & 0x8000))
+		{
+			WaitForMouseUp = false;
+			WndProc(WM_LBUTTONUP, 0, MAKELPARAM((int16_t)Data::LastCursorPos.x, (int16_t)Data::LastCursorPos.y));
+		}
+	}
 
 	Animation = Util::Lerp(Animation, IsOpen ? 1.f : 0.f, Style::AnimationSpeed);
 
@@ -219,6 +228,9 @@ bool Vane::Render()
 	// Background
 	Background::Render();
 
+	// Clip Rect
+	renderer.PushClipRect(XyVec2(x, y), XyVec2(x + w, y + h));
+
 	// Sidebar
 	Sidebar::Render(&Hovered, &Selected);
 
@@ -243,6 +255,9 @@ bool Vane::Render()
 	{
 		Overlays[i]->Draw(i, &OpenedOverlay);
 	}
+
+	renderer.PopClipRect();
+
 skipRender:
 
 	//#ifdef _DEBUG
@@ -277,8 +292,34 @@ skipRender:
 	return true;
 }
 
+ResizingSide Vane::GetResizeType(float mouseX, float mouseY)
+{
+	constexpr float ResizeSize = 5.f;
+	if (isInRect(mouseX, mouseY, x - ResizeSize, y - ResizeSize, ResizeSize * 2.f, ResizeSize * 2.f))
+		return ResizingSide::TopLeft;
+	else if (isInRect(mouseX, mouseY, x + w - ResizeSize, y - ResizeSize, ResizeSize * 2.f, ResizeSize * 2.f))
+		return ResizingSide::TopRight;
+	else if (isInRect(mouseX, mouseY, x - ResizeSize, y + h - ResizeSize, ResizeSize * 2.f, ResizeSize * 2.f))
+		return ResizingSide::BottomLeft;
+	else if (isInRect(mouseX, mouseY, x + w - ResizeSize, y + h - ResizeSize, ResizeSize * 2.f, ResizeSize * 2.f))
+		return ResizingSide::BottomRight;
+	else if (isInRect2(mouseX, mouseY, x + ResizeSize, y - ResizeSize, x + w - ResizeSize, y + ResizeSize))
+		return ResizingSide::Top;
+	else if (isInRect2(mouseX, mouseY, x + ResizeSize, y + h - ResizeSize, x + w - ResizeSize, y + h + ResizeSize))
+		return ResizingSide::Bottom;
+	else if (isInRect2(mouseX, mouseY, x - ResizeSize, y + ResizeSize, x + ResizeSize, y + h - ResizeSize))
+		return ResizingSide::Left;
+	else if (isInRect2(mouseX, mouseY, x + w - ResizeSize, y + ResizeSize, x + w + ResizeSize, y + h - ResizeSize))
+		return ResizingSide::Right;
+	else
+		return ResizingSide::None;
+}
+
 std::optional<long> Vane::WndProc(uint32_t msg, uint64_t wParam, int64_t lParam)
 {
+	if (msg == WM_LBUTTONDOWN)
+		WaitForMouseUp = true;
+
 	float mouseX = (float)(int16_t)LOWORD(lParam);
 	float mouseY = (float)(int16_t)HIWORD(lParam);
 
@@ -314,14 +355,137 @@ std::optional<long> Vane::WndProc(uint32_t msg, uint64_t wParam, int64_t lParam)
 			return ret;
 	}
 
-	auto ret = Sidebar::WndProc(msg, wParam, lParam, &Hovered, &Selected);
-	if (ret.has_value())
-		return ret.value();
+	// Resize
+	if (AllowResize)
+	{
+		if (msg == WM_LBUTTONDOWN)
+		{
+			auto type = GetResizeType(mouseX, mouseY);
+			if (type != ResizingSide::None)
+			{
+				Resizing = type;
+				InitialRect.x = x;
+				InitialRect.y = y;
+				InitialRect.z = w;
+				InitialRect.w = h;
+				Moving = true;
+				return S_OK;
+			}
+		}
+		else if (msg == WM_MOUSEMOVE)
+		{
+			ResizingSide cursor_type;
+			// Resize
+			if (Resizing != ResizingSide::None)
+			{
+				cursor_type = Resizing;
+
+				XyVec4 new_rect = { x, y, w, h };
+
+				switch (Resizing)
+				{
+				case ResizingSide::Top:
+					new_rect.y = mouseY;
+					new_rect.w = (InitialRect.y - new_rect.y) + InitialRect.w;
+					break;
+				case ResizingSide::Bottom:
+					new_rect.w = mouseY - InitialRect.y;
+					break;
+				case ResizingSide::Left:
+					new_rect.x = mouseX;
+					new_rect.z = (InitialRect.x - new_rect.x) + InitialRect.z;
+					break;
+				case ResizingSide::Right:
+					new_rect.z = mouseX - InitialRect.x;
+					break;
+				case ResizingSide::TopLeft:
+					new_rect.y = mouseY;
+					new_rect.w = (InitialRect.y - new_rect.y) + InitialRect.w;
+					new_rect.x = mouseX;
+					new_rect.z = (InitialRect.x - new_rect.x) + InitialRect.z;
+					break;
+				case ResizingSide::TopRight:
+					new_rect.y = mouseY;
+					new_rect.w = (InitialRect.y - new_rect.y) + InitialRect.w;
+					new_rect.z = mouseX - InitialRect.x;
+					break;
+				case ResizingSide::BottomLeft:
+					new_rect.w = mouseY - InitialRect.y;
+					new_rect.x = mouseX;
+					new_rect.z = (InitialRect.x - new_rect.x) + InitialRect.z;
+					break;
+				case ResizingSide::BottomRight:
+					new_rect.w = mouseY - InitialRect.y;
+					new_rect.z = mouseX - InitialRect.x;
+					break;
+				}
+
+				if (new_rect.z < Style::MinSize.x)
+					new_rect.z = Style::MinSize.x;
+				else if (new_rect.z > Style::MaxSize.x)
+					new_rect.z = Style::MaxSize.x;
+				if (new_rect.w < Style::MinSize.y)
+					new_rect.w = Style::MinSize.y;
+				else if (new_rect.w > Style::MaxSize.y)
+					new_rect.w = Style::MaxSize.y;
+
+				x = new_rect.x;
+				y = new_rect.y;
+				w = new_rect.z;
+				h = new_rect.w;
+			}
+			else
+			{
+				cursor_type = GetResizeType(mouseX, mouseY);
+				if (cursor_type == ResizingSide::None)
+					goto no_resize;
+			}
+
+			switch (cursor_type)
+			{
+			case ResizingSide::Top:
+			case ResizingSide::Bottom:
+				Cursor::current = Cursor::sizev;
+				break;
+			case ResizingSide::Left:
+			case ResizingSide::Right:
+				Cursor::current = Cursor::size;
+				break;
+			case ResizingSide::TopLeft:
+			case ResizingSide::BottomRight:
+				Cursor::current = Cursor::sizese;
+				break;
+			case ResizingSide::TopRight:
+			case ResizingSide::BottomLeft:
+				Cursor::current = Cursor::sizesw;
+				break;
+			}
+
+			return S_OK;
+		}
+		else if (msg == WM_LBUTTONUP && Resizing != ResizingSide::None)
+		{
+			Resizing = ResizingSide::None;
+			Moving = false;
+			return S_OK;
+		}
+	}
+no_resize:
+
+	if (!Moving)
+	{
+		int temp_hovered = -1;
+		auto ret = Sidebar::WndProc(msg, wParam, lParam, &temp_hovered, &Selected);
+		Hovered = temp_hovered;
+		if (ret.has_value())
+			return ret.value();
+	}
 
 	if (msg == WM_LBUTTONDOWN)
 	{
 		if (isInRect(mouseX, mouseY, x, y, w, h))
 		{
+			Resizing = ResizingSide::None;
 			MovingOff = XyVec2(mouseX - x, mouseY - y);
 			Moving = true;
 			return S_OK;
@@ -454,6 +618,8 @@ bool Vane::Cursor::Init()
 	text = LoadCursorA(NULL, IDC_IBEAM);
 	size = LoadCursorA(NULL, IDC_SIZEWE);
 	sizev = LoadCursorA(NULL, IDC_SIZENS);
+	sizese = LoadCursorA(NULL, IDC_SIZENWSE);
+	sizesw = LoadCursorA(NULL, IDC_SIZENESW);
 	sizeall = LoadCursorA(NULL, IDC_SIZEALL);
 
 	current = arrow;

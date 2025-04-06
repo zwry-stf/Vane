@@ -201,8 +201,8 @@ float ChildTab::Render(float x, float y, float alpha, int id, int* hovered, int*
 		{
 
 			if (PositionsAreas[Widgets[i]->area] + Widgets[i]->default_height / 2.f > Vane::y + Vane::Style::TopBarHeight)
-				Widgets[i]->Draw(posX + area_width * Widgets[i]->area + Vane::Style::Spacing + area_width / 3.f, PositionsAreas[Widgets[i]->area] - Widgets[i]->default_height / 2.f, 
-					area_width - Vane::Style::Spacing * 2.f - area_width / 3.f, alpha, i, &Hovered, &Selected, &Vane::OpenedOverlay);
+				Widgets[i]->Draw(posX + area_width * Widgets[i]->area + Vane::Style::Spacing, PositionsAreas[Widgets[i]->area] - Widgets[i]->default_height / 2.f, 
+					area_width - Vane::Style::Spacing * 2.f, alpha, i, &Hovered, &Selected, &Vane::OpenedOverlay);
 
 			PositionsAreas[Widgets[i]->area] += Widgets[i]->default_height / 2.f;
 			continue;

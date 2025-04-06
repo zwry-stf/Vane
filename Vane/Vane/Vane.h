@@ -23,9 +23,22 @@ enum ItemIds
 	Tab_Begin = 300
 };
 
+enum class ResizingSide
+{
+	None = -1,
+	Top = 0,
+	Bottom = 1,
+	Left = 2,
+	Right = 3,
+	TopLeft = 4,
+	TopRight = 5,
+	BottomLeft = 6,
+	BottomRight = 7
+};
+
 class Vane {
 public:
-	static bool Init(IDXGISwapChain* swapchain, const XyVec2 menuSize = XyVec2(800.f, 550.f));
+	static bool Init(IDXGISwapChain* swapchain, const XyVec2 menuSize = XyVec2(-1.f, -1.f));
 	static void Destroy();
 
 	static bool Render();
@@ -40,16 +53,18 @@ public:
 	static TabNormal* LastTab();
 
 public:
-	inline static bool IsOpen = true;
+	inline static bool IsOpen     = true;
 	inline static float Animation = 0.f;
 
-	inline static bool Initialized = false;
+	inline static bool Initialized      = false;
 	inline static bool RenderingStarted = false;
 
 	inline static float x = -1.f;
 	inline static float y = -1.f;
 	inline static float w = 0.f;
 	inline static float h = 0.f;
+
+	inline static bool AllowResize = true;
 
 public:
 	inline static _Xyphra renderer;
@@ -73,6 +88,11 @@ public:
 		inline static float ChildWindowWidth = 220.f;
 
 		inline static float AnimationSpeed   = 8.f;
+
+		// Constants
+		inline static const constexpr XyVec2 DefaultSize = XyVec2(800.f, 550.f);
+		inline static const constexpr XyVec2 MinSize = XyVec2(400.f, 260.f);
+		inline static const constexpr XyVec2 MaxSize = XyVec2(2000.f, 1500.f);
 
 		// Colors						     
 		inline static XyColor Background     = XyColor(0.1f, 0.1f, 0.1f, 0.35f);
@@ -179,6 +199,8 @@ public:
 		inline static HCURSOR text				  = NULL;
 		inline static HCURSOR size				  = NULL;
 		inline static HCURSOR sizev				  = NULL;
+		inline static HCURSOR sizesw			  = NULL;
+		inline static HCURSOR sizese			  = NULL;
 		inline static HCURSOR sizeall			  = NULL;
 
 		static bool Init();
@@ -316,6 +338,9 @@ public:
 		inline static std::vector<IModule*> module_configs;
 	};
 
+protected:
+	static ResizingSide GetResizeType(float x, float y);
+
 public:
 	inline static constexpr float MinAlpha = 1.f / 255.f;
 
@@ -333,6 +358,10 @@ protected:
 
 	inline static bool Moving = false;
 	inline static XyVec2 MovingOff;
+	inline static ResizingSide Resizing = ResizingSide::None;
+	inline static XyVec4 InitialRect;
+
+	inline static bool WaitForMouseUp = false;
 
 	// Friends
 	friend class Tab;

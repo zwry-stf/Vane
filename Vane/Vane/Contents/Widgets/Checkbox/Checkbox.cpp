@@ -20,18 +20,12 @@ void Checkbox::Draw(const float x, const float y, const float w, const float alp
 	if (alpha < Vane::MinAlpha)
 		return;
 
-	// Text
-	Vane::renderer.AddText(
-		XyVec2(x, y + (lastH - Vane::Style::TextSize) / 2), 
-		Vane::Util::DisableColor(Vane::Util::ConvColor(Vane::Style::Text, alpha), animation_disabled), strLabel.c_str()
-	);
-
 	float size = default_height + 3.f;
 
 	// Child
+	const float offset = animation_hovered_child * 1.5f;
 	if (child_id != -1)
 	{
-		const float offset = animation_hovered_child * 1.5f;
 		if (pOverlays->at(child_id)->isColorPicker)
 		{
 			Vane::renderer.AddRectFilled(
@@ -60,35 +54,33 @@ void Checkbox::Draw(const float x, const float y, const float w, const float alp
 	}
 
 	// Toggle
-	Vane::renderer.AddRectFilled(XyVec2(
-		x + w - size - 3.f,
-		y + size / 5.f
-	), XyVec2(
-		x + w - 3.f,
-		y + lastH - size / 5.f
-	), Vane::Util::DisableColor(Vane::Util::ConvColor(Vane::Style::Accent2, alpha), animation_disabled), Vane::Style::Rounding
-	);
+	Vane::renderer.AddRectFilled(XyVec2(x + w - size - 3.f, y + size / 5.f),
+		XyVec2(x + w - 3.f, y + lastH - size / 5.f),
+		Vane::Util::DisableColor(Vane::Util::ConvColor(Vane::Style::Accent2, alpha), animation_disabled), 
+		Vane::Style::Rounding);
 
-	Vane::renderer.AddRect(XyVec2(
-		x + w - size - 3.f,
-		y + size / 5.f
-	), XyVec2(
-		x + w - 3.f,
-		y + lastH - size / 5.f
-	), Vane::Util::DisableColor(Vane::Util::ConvColor(Vane::Style::Accent, alpha * (0.5f + animation_hovered * 0.5f)), animation_disabled), Vane::Style::Rounding, 0, Vane::Style::BorderSize
-	);
+	Vane::renderer.AddRect(XyVec2(x + w - size - 3.f, y + size / 5.f),
+		XyVec2(x + w - 3.f, y + lastH - size / 5.f),
+		Vane::Util::DisableColor(Vane::Util::ConvColor(Vane::Style::Accent, alpha * (0.5f + animation_hovered * 0.5f)), animation_disabled), 
+		Vane::Style::Rounding, 0, Vane::Style::BorderSize);
 
 	float animation_value = 0.5f - abs(0.5f - animation_selected);
 
 	float height = lastH - size / 2.5f;
-	Vane::renderer.AddRectFilled(XyVec2(
-		x + w - size - 2.f + height * animation_selected + animation_value,
-		y + size / 5.f + 1.f + animation_value
-	), XyVec2(
-		x + w - size - 4.f + height + height * animation_selected - animation_value,
-		y + lastH - size / 5.f - 1.f - animation_value
-	), Vane::Util::DisableColor(Vane::Util::ConvColor(Vane::Style::Highlight, alpha), animation_disabled), Vane::Style::Rounding
-	);
+	Vane::renderer.AddRectFilled(XyVec2(x + w - size - 2.f + height * animation_selected + animation_value, y + size / 5.f + 1.f + animation_value),
+		XyVec2(x + w - size - 4.f + height + height * animation_selected - animation_value, y + lastH - size / 5.f - 1.f - animation_value),
+		Vane::Util::DisableColor(Vane::Util::ConvColor(Vane::Style::Highlight, alpha), animation_disabled), 
+		Vane::Style::Rounding);
+
+
+	// Text
+	Vane::renderer.PushClipRect(XyVec2(x, y), XyVec2(child_id != -1 ? (x + w - size - 7.f - lastH + size / 2.5f - offset) : (x + w - 3.f), y + lastH), true);
+
+	Vane::renderer.AddText(
+		XyVec2(x, y + (lastH - Vane::Style::TextSize) / 2),
+		Vane::Util::DisableColor(Vane::Util::ConvColor(Vane::Style::Text, alpha), animation_disabled), strLabel.c_str());
+
+	Vane::renderer.PopClipRect();
 }
 
 std::optional<long> Checkbox::WndProc(const uint32_t msg, const uint64_t wParam, int64_t lParam, const int id, int* hovered, int* selected, int* opened)

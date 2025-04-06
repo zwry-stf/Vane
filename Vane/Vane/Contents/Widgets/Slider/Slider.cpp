@@ -22,6 +22,8 @@ void Slider::Draw(const float x, const float y, const float w, const float alpha
 		return;
 
 	// Text
+	Vane::renderer.PushClipRect(XyVec2(x, y), XyVec2(x + w, y + lastH), true);
+
 	float end = Vane::renderer.AddText(XyVec2(x, y), 
 		Vane::Util::DisableColor(Vane::Util::ConvColor(Vane::Style::Text, alpha), animation_disabled), (strLabel + ": ").c_str());
 
@@ -30,6 +32,8 @@ void Slider::Draw(const float x, const float y, const float w, const float alpha
 
 	Vane::renderer.AddText(XyVec2(end, y),
 		Vane::Util::DisableColor(Vane::Util::ConvColor(Vane::Style::Accent, alpha), animation_disabled), buffer);
+
+	Vane::renderer.PopClipRect();
 
 	// Line
 	const float circle_width = default_height - Vane::Style::TextSize - 4.f;

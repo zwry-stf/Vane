@@ -14,7 +14,27 @@ void ColorPickerWidget::Draw(const float x, const float y, const float w, const 
 	animation_hovered = Vane::Util::Lerp(animation_hovered, id == *hovered && _hovered == 1 ? 1.f : 0.f, Vane::Style::AnimationSpeed);
 	animation_disabled = Vane::Util::Lerp(animation_disabled, (disabled && (*disabled == !dis_inv)) ? 1.f : 0.f, Vane::Style::AnimationSpeed);
 
+	// Color
+	const float color_height = lastH / 1.7f;
+	const float spacing = (lastH - color_height) / 2.f;
+	const float offset = animation_hovered * 1.5f;
+	const float size = default_height + 3.f;
+
+	Vane::renderer.AddRectFilled(
+		XyVec2(x + w - size - 3.f - offset, y + spacing - offset),
+		XyVec2(x + w - 3.f + offset, y + lastH - spacing + offset),
+		Vane::Util::DisableColor(Vane::Util::ConvColor(((ColorPicker*)pOverlays->at(child_id))->getColorIA(), alpha), animation_disabled),
+		Vane::Style::Rounding / 2.f + offset);
+
+	Vane::renderer.AddRect(
+		XyVec2(x + w - size - 3.f - offset, y + spacing - offset),
+		XyVec2(x + w - 3.f + offset, y + lastH - spacing + offset),
+		Vane::Util::DisableColor(Vane::Util::ConvColor(Vane::Style::Accent, alpha), animation_disabled),
+		Vane::Style::Rounding / 2.f + offset, 0, Vane::Style::BorderSize);
+
 	// Text
+	Vane::renderer.PushClipRect(XyVec2(x, y), XyVec2(x + w - size - 4.f, y + lastH), true);
+
 	label_width = Vane::renderer.AddText(
 		XyVec2(x, y + (lastH - Vane::Style::TextSize) / 2),
 		Vane::Util::DisableColor(Vane::Util::ConvColor(Vane::Style::Text, alpha), animation_disabled), (strLabel + ": ").c_str()
@@ -82,23 +102,7 @@ void ColorPickerWidget::Draw(const float x, const float y, const float w, const 
 			XyVec2(selected_char_begin + 1.f, y + (lastH - Vane::Style::TextSize) / 2 + Vane::Style::TextSize + 1.f),
 			Vane::Util::DisableColor(Vane::Util::ConvColor(Vane::Style::Accent, alpha * typing_animation), animation_disabled));
 
-	// Color
-	const float color_height = lastH / 1.7f;
-	const float spacing = (lastH - color_height) / 2.f;
-	const float offset = animation_hovered * 1.5f;
-	const float size = default_height + 3.f;
-
-	Vane::renderer.AddRectFilled(
-		XyVec2(x + w - size - 3.f - offset, y + spacing - offset),
-		XyVec2(x + w - 3.f + offset, y + lastH - spacing + offset),
-		Vane::Util::DisableColor(Vane::Util::ConvColor(((ColorPicker*)pOverlays->at(child_id))->getColorIA(), alpha), animation_disabled),
-		Vane::Style::Rounding / 2.f + offset);
-	
-	Vane::renderer.AddRect(
-		XyVec2(x + w - size - 3.f - offset, y + spacing - offset),
-		XyVec2(x + w - 3.f + offset, y + lastH - spacing + offset),
-		Vane::Util::DisableColor(Vane::Util::ConvColor(Vane::Style::Accent, alpha), animation_disabled),
-		Vane::Style::Rounding / 2.f + offset, 0, Vane::Style::BorderSize);
+	Vane::renderer.PopClipRect();
 }
 
 void ColorPickerWidget::stopTyping()

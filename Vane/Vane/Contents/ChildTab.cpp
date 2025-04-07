@@ -157,7 +157,7 @@ float ChildTab::Render(float x, float y, float alpha, int id, int* hovered, int*
 			Vane::renderer.AddRectFilled(
 				XyVec2(posX + area_width * Widgets[i]->area + Vane::Style::Spacing - Vane::Style::Spacing / 3.f, SizesAreas[Widgets[i]->area].x),
 				XyVec2(posX + area_width * Widgets[i]->area + area_width - Vane::Style::Spacing + Vane::Style::Spacing / 3.f, SizesAreas[Widgets[i]->area].y),
-				Vane::Util::ConvColor(Vane::Style::Background, alpha * 0.45f),
+				Vane::Util::ConvColor(Vane::Style::Background, alpha * 0.85f),
 				Vane::Style::Rounding / 2.f);
 
 		SizesAreas[Widgets[i]->area].x = SizesAreas[Widgets[i]->area].y + Vane::Style::Spacing;
@@ -179,7 +179,7 @@ float ChildTab::Render(float x, float y, float alpha, int id, int* hovered, int*
 		Vane::renderer.AddRectFilled(
 			XyVec2(posX + area_width * i + Vane::Style::Spacing - Vane::Style::Spacing / 3.f, SizesAreas[i].x),
 			XyVec2(posX + area_width * i + area_width - Vane::Style::Spacing + Vane::Style::Spacing / 3.f, SizesAreas[i].y),
-			Vane::Util::ConvColor(Vane::Style::Background, alpha * 0.45f),
+			Vane::Util::ConvColor(Vane::Style::Background, alpha * 0.85f),
 			Vane::Style::Rounding / 2.f);
 	}
 
@@ -414,6 +414,7 @@ void ChildTab::SetIcon(const unsigned char* data, size_t size)
 	XY_ASSERT(!Vane::RenderingStarted && !Vane::Initialized);
 
 	Icon = new XyTextureID;
+	*Icon = 0;
 
 	Vane::Icons::icons.emplace_back(data, size, Icon);
 }

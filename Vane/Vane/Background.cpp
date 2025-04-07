@@ -4,6 +4,7 @@
 #include <DirectXMath.h>
 #include "Res/shader/Shaders.h"
 
+extern DXGI_FORMAT GetCorrectFormat(DXGI_FORMAT curr);
 
 bool Vane::Background::Init()
 {
@@ -22,7 +23,7 @@ bool Vane::Background::Init()
     texDesc.Height = renderer.g_backBufferDesc.Height;
     texDesc.MipLevels = renderer.g_backBufferDesc.MipLevels;
     texDesc.ArraySize = 1;
-    texDesc.Format = renderer.g_backBufferDesc.Format;
+    texDesc.Format = GetCorrectFormat(renderer.g_swapChainDesc.BufferDesc.Format);
     texDesc.SampleDesc.Count = 1;
     texDesc.SampleDesc.Quality = 0;
     texDesc.Usage = D3D11_USAGE_DEFAULT;
@@ -278,18 +279,21 @@ void Vane::Background::Render()
     renderer.g_pd3dDeviceContext->DrawIndexed(6, 0, 0);
 }
 
+
+#define save_release(v) if (v) v->Release(); v = nullptr
+
 void Vane::Background::Destroy()
 {
-    if (m_pOffscreenTexture) m_pOffscreenTexture->Release();
-    if (m_pOffscreenSRV) m_pOffscreenSRV->Release();
-    if (m_pBackBuffer) m_pBackBuffer->Release();
-    if (m_pQuadVS) m_pQuadVS->Release();
-    if (m_pBlurPS) m_pBlurPS->Release();
-    if (m_pInputLayout) m_pInputLayout->Release();
-    if (m_pQuadVB) m_pQuadVB->Release();
-    if (m_pQuadIB) m_pQuadIB->Release();
-    if (m_pSamplerState) m_pSamplerState->Release();
-    if (m_pBlendState) m_pBlendState->Release();
+    save_release(m_pOffscreenTexture);
+    save_release(m_pOffscreenSRV);
+    save_release(m_pBackBuffer);
+    save_release(m_pQuadVS);
+    save_release(m_pBlurPS);
+    save_release(m_pInputLayout);
+    save_release(m_pQuadVB);
+    save_release(m_pQuadIB);
+    save_release(m_pSamplerState);
+    save_release(m_pBlendState);
 
     ConstantBuffer.Destroy();
 }

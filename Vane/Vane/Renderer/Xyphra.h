@@ -29,6 +29,7 @@ public:
 	ID3D11DeviceContext* g_pd3dDeviceContext = nullptr;
 	ID3D11RenderTargetView* g_pd3dRenderTargetView = nullptr;
 	D3D11_TEXTURE2D_DESC g_backBufferDesc = {};
+	DXGI_SWAP_CHAIN_DESC g_swapChainDesc = {};
 	HWND g_hWnd = nullptr;
 
 	// Text Rendering

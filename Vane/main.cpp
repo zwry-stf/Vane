@@ -200,6 +200,8 @@ int WINAPI main()
     Vane::AddDefaultThemeTab();
     Vane::AddConfigTab("Config");
 
+    // Add Config Modules
+    AddConfig();
 
     // Init Vane
     if (!Vane::Init(g_pSwapChain, XyVec2(800.f, 550.f)))
@@ -207,9 +209,6 @@ int WINAPI main()
         std::cerr << "Failed to init Vane, Error: " << Vane::Errors::Get() << std::endl;
         return -1;
     }
-
-    // Add Config Modules
-    AddConfig();
 
     // Show Window
     ShowWindow(g_hWnd, SW_SHOW);

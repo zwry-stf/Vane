@@ -79,8 +79,6 @@ bool Vane::Init(IDXGISwapChain* swapchain, const XyVec2 menuSize)
 		return false;
 	}
 
-	renderer.data.display_size = XyVec2((float)renderer.g_backBufferDesc.Width, (float)renderer.g_backBufferDesc.Height);
-
 	if (!Cursor::Init())
 	{
 		Vane::Errors::Set("Failed to load Cursors");
@@ -110,7 +108,13 @@ bool Vane::Init(IDXGISwapChain* swapchain, const XyVec2 menuSize)
 
 void Vane::Destroy()
 {
+	Icons::Destroy();
+
+	Vane::Background::Destroy();
+
 	renderer.destroy();
+
+	Icons::Destroy();
 }
 
 bool Vane::Render()
@@ -656,7 +660,7 @@ bool Vane::Icons::Init()
 }
 
 #define RELEASE_ICON(icon)  if (icon) \
-		((ID3D11ShaderResourceView*)icon)->Release()
+		((ID3D11ShaderResourceView*)icon)->Release(); icon = nullptr
 
 void Vane::Icons::Destroy()
 {

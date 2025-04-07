@@ -1,8 +1,33 @@
 #include "Xyphra.h"
 #include <d3dcompiler.h>
 
+#define save_release(v) if (v) v->Release(); v = nullptr
+
 _Xyphra::_Xyphra() : Fonts(this)
 {
+}
+
+DXGI_FORMAT GetCorrectFormat(DXGI_FORMAT curr)
+{
+    switch (curr)
+    {
+    case DXGI_FORMAT_R8G8B8A8_UNORM_SRGB:
+        return DXGI_FORMAT_R8G8B8A8_UNORM;
+    case DXGI_FORMAT_BC1_UNORM_SRGB:
+        return DXGI_FORMAT_BC1_UNORM;
+    case DXGI_FORMAT_BC2_UNORM_SRGB:
+        return DXGI_FORMAT_BC2_UNORM;
+    case DXGI_FORMAT_BC3_UNORM_SRGB:
+        return DXGI_FORMAT_BC3_UNORM;
+    case DXGI_FORMAT_BC7_UNORM_SRGB:
+        return DXGI_FORMAT_BC7_UNORM;
+    case DXGI_FORMAT_B8G8R8X8_UNORM_SRGB:
+        return DXGI_FORMAT_B8G8R8X8_UNORM;
+    case DXGI_FORMAT_B8G8R8A8_UNORM_SRGB:
+        return DXGI_FORMAT_B8G8R8A8_UNORM;
+    }
+
+    return curr;
 }
 
 bool _Xyphra::init(IDXGISwapChain* pSwapChain)
@@ -11,6 +36,7 @@ bool _Xyphra::init(IDXGISwapChain* pSwapChain)
         return false;
 
     g_pSwapChain = pSwapChain;
+    g_pSwapChain->AddRef();
 
     // Device
     if (FAILED(
@@ -24,10 +50,9 @@ bool _Xyphra::init(IDXGISwapChain* pSwapChain)
         return false;
 
     // Window
-    DXGI_SWAP_CHAIN_DESC sd;
-    pSwapChain->GetDesc(&sd);
+    pSwapChain->GetDesc(&g_swapChainDesc);
 
-    g_hWnd = sd.OutputWindow;
+    g_hWnd = g_swapChainDesc.OutputWindow;
     if (!g_hWnd)
         return false;
 
@@ -40,10 +65,20 @@ bool _Xyphra::init(IDXGISwapChain* pSwapChain)
     pBackBuffer->GetDesc(&g_backBufferDesc);
     data.display_size = XyVec2((float)g_backBufferDesc.Width, (float)g_backBufferDesc.Height);
 
-    long hr = g_pd3dDevice->CreateRenderTargetView(pBackBuffer, NULL, &g_pd3dRenderTargetView);
-    pBackBuffer->Release();
+    D3D11_RENDER_TARGET_VIEW_DESC desc{};
+    desc.Format = GetCorrectFormat(g_swapChainDesc.BufferDesc.Format);
+    desc.ViewDimension = g_swapChainDesc.SampleDesc.Count > 1 ? D3D11_RTV_DIMENSION_TEXTURE2DMS : D3D11_RTV_DIMENSION_TEXTURE2D;
+    long hr = g_pd3dDevice->CreateRenderTargetView(pBackBuffer, &desc, &g_pd3dRenderTargetView);
     if (FAILED(hr))
-        return false;
+    {
+        hr = g_pd3dDevice->CreateRenderTargetView(pBackBuffer, NULL, &g_pd3dRenderTargetView);
+        if (FAILED(hr))
+        {
+            pBackBuffer->Release();
+            return false;
+        }
+    }
+    pBackBuffer->Release();
 
     if (!create_dx11_resources())
         return false;
@@ -53,10 +88,12 @@ bool _Xyphra::init(IDXGISwapChain* pSwapChain)
 
 void _Xyphra::destroy()
 {
-    dx11.clear();
+    save_release(g_pd3dRenderTargetView);
+    save_release(g_pd3dDevice);
+    save_release(g_pd3dDeviceContext);
+    save_release(g_pSwapChain);
 
-    if (g_pd3dRenderTargetView)
-        g_pd3dRenderTargetView->Release();
+    dx11.clear();
 }
 
 bool _Xyphra::start_frame(bool update_frame_time)
